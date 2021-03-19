@@ -1,0 +1,43 @@
+title szymonszoldra
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+server-->browser: HTML-code
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+server-->browser: spa.js
+
+note over browser:
+javascript requests JSON from the server
+end note
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->browser: [{content: "Manchester united the reds go marching on", date: "2021-03-19T07:50:10.022Z"},…]
+
+note over browser:
+i can see all 100 notes
+end note
+browser->server: HTTP GET https://studies.cs.helsinki.fi/favicon.ico
+
+note over server:
+somehow the favicon is the html
+    <html>
+        <head>
+        </head>
+        <body>
+           <a href="/stats">Course stats</a>
+        </body>
+    </html>
+end note
+
+server->browser: {content-type: text/html}
+
+note over browser:
+i submitted new note
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server-->browser: {"message":"note created", content-type: application/json; charset=utf-8}
+note over browser:
+i can see my note
+end note
