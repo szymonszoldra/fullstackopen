@@ -5,6 +5,10 @@ const Button = ({name, handler}) => (
   <button onClick={handler} >{name}</button>
 )
 
+const Statistic = ({ text, value }) => (
+  <p>{text} {value}</p>
+)
+
 const Statistics = (props) => {
   const {good, neutral, bad, all, average, positive} = props;
 
@@ -13,12 +17,12 @@ const Statistics = (props) => {
       <h2>statistics</h2>
       {all ? 
         <>
-          <p>good {good}</p>
-          <p>neutral {neutral}</p>
-          <p>bad {bad}</p>
-          <p>all {all}</p>
-          <p>average {average ? average : 0}</p>
-          <p>positive {positive ? positive : 0} %</p>
+          <Statistic text="good" value={good}/>
+          <Statistic text="neutral" value={neutral}/>
+          <Statistic text="bad" value={bad}/>
+          <Statistic text="all" value={all}/>
+          <Statistic text="average" value={average ? average : 0}/>
+          <Statistic text="positive" value={positive ? `${positive}%` : `0%`}/>
         </> : <p>No feedback given</p>
       }
       
