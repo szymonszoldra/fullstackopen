@@ -6,7 +6,10 @@ const Button = ({name, handler}) => (
 )
 
 const Statistic = ({ text, value }) => (
-  <p>{text} {value}</p>
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
 )
 
 const Statistics = (props) => {
@@ -16,14 +19,16 @@ const Statistics = (props) => {
     <>
       <h2>statistics</h2>
       {all ? 
-        <>
-          <Statistic text="good" value={good}/>
-          <Statistic text="neutral" value={neutral}/>
-          <Statistic text="bad" value={bad}/>
-          <Statistic text="all" value={all}/>
-          <Statistic text="average" value={average ? average : 0}/>
-          <Statistic text="positive" value={positive ? `${positive}%` : `0%`}/>
-        </> : <p>No feedback given</p>
+        <table>
+          <tbody>
+            <Statistic text="good" value={good}/>
+            <Statistic text="neutral" value={neutral}/>
+            <Statistic text="bad" value={bad}/>
+            <Statistic text="all" value={all}/>
+            <Statistic text="average" value={average ? average : 0}/>
+            <Statistic text="positive" value={positive ? `${positive}%` : `0%`}/>
+          </tbody>
+        </table> : <p>No feedback given</p>
       }
       
     </>
