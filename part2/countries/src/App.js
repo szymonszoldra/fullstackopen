@@ -12,7 +12,27 @@ const Finder = ({inputValue, handler}) => {
   )
 }
 
-const SingleCountry = ({country}) => (
+const SingleCountry = ({country}) => {
+  const [weather, setWeather] = useState({});
+
+  useEffect(() => {
+    const api_key = process.env.REACT_APP_API_KEY;
+    async function fetchMyAPI() {
+      try {
+        const URL = `https://api.openweathermap.org/data/2.5/weather?q=${country.capital}&appid=${api_key}`;
+        const response = await axios.get(URL);
+        setWeather(response.data);
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    fetchMyAPI();
+  }, [country.capital]);
+
+  const temperatureInC = `${(weather?.main?.temp - 273.15).toFixed(1)}C`;
+
+  return (
   <>
     <h1>{country.name}</h1>
     <p>capital {country.capital}</p>
@@ -22,8 +42,12 @@ const SingleCountry = ({country}) => (
       {country.languages.map((language) => <li key={language.iso639_1}>{language.name}</li>)}
     </ul>
     <img src={country.flag} alt="country flag" width="150px"/>
+    <h2>Weather in {country.capital}</h2>
+    <p>temperature: {temperatureInC}</p>
+    <p>wind: {weather?.wind?.speed}m/s</p>
   </>
-)
+  )
+}
 
 const SingleCountryInList = ({ country }) => {
   const [showDetails, setShowDetails] = useState(false);
