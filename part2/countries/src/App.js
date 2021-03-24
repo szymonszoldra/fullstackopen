@@ -25,16 +25,29 @@ const SingleCountry = ({country}) => (
   </>
 )
 
+const SingleCountryInList = ({ country }) => {
+  const [showDetails, setShowDetails] = useState(false);
+
+  const handler = () => setShowDetails(!showDetails);
+  return (
+    <>
+    {country.name} <button onClick={handler}>{showDetails ? 'Hide' : 'Show'}</button>
+    {showDetails && <SingleCountry country={country} />}
+    </>
+  )
+
+}
+
 const CountriesList = ({countries}) => {
   const list = countries.map((country) => (
     <li key={country.alpha2Code}>
-      {country.name}
+      <SingleCountryInList country={country} />
     </li>
   ))
 
   return (
     <ul>
-      {list}
+      {list} 
     </ul>
   )
 }
@@ -52,7 +65,6 @@ const Countries = ({ countries }) => {
 }
 
 function App() {
-
   const [initialData, setInitialData] = useState([]);
   const [inputValue, setInputValue] = useState([]);
 
