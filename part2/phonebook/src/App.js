@@ -1,47 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import noteService from './services/notes';
 
-const Filter = ({handler, value}) => <div>filter shown with <input onChange={handler} value={value}/></div>
-
-const SinglePerson = ({person, setPersons, persons}) => {
-
-  const handleDelete = () => {
-    if(!window.confirm(`Delete ${person.name}?`)) return;
-
-    noteService
-      .deletePerson(person.id)
-      .then(() => {
-        const arrayWithoutDeletedPerson = persons.filter((p) => p.id !== person.id);
-        setPersons(arrayWithoutDeletedPerson);
-      });
-  }
-
-  return <p key={person.name}>{person.name} {person.number} <button onClick={handleDelete}>delete</button></p>
-}
-
-const Persons = ({ persons, setPersons }) => {
-  return (
-    <>
-      {persons.map((person) => (
-        <SinglePerson setPersons={setPersons} key={person.id} person={person} persons={persons}/>
-      ))}
-    </>
-  )
-}
-
-const Form = ({formHandler, nameHandler, nameValue, numberHandler, numberValue}) => (
-  <form onSubmit={formHandler}>
-    <div>
-      name: <input onChange={nameHandler} value={nameValue}/>
-    </div>
-    <div>
-      number: <input onChange={numberHandler} value={numberValue}/>
-    </div>
-    <div>
-      <button type="submit">add</button>
-    </div>
-  </form>
-)
+import { Form } from './components/Form';
+import { Filter } from './components/Filter';
+import { Persons } from './components/Persons';
 
 const App = () => {
   const [ persons, setPersons ] = useState([]); 
@@ -57,16 +19,30 @@ const App = () => {
       })
   },[]);
 
+  const reloadPersons = () => {
+    noteService
+      .getAll()
+      .then(reloadedPersons => {
+        setPersons(reloadedPersons)
+      })
+  }
 
-  const userAlreadyExists = () => {
-    const user = persons.filter((person) => person.name.toLowerCase() === newName.toLowerCase());
-    return user.length;
-  };
+  const userAlreadyExists = (user) => user.length;
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (userAlreadyExists()) {
-      alert(`${newName} is already added to phonebook`);
+    const user = persons.filter((person) => person.name.toLowerCase() === newName.toLowerCase());
+
+    if (userAlreadyExists(user)) {
+      if (!window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) return;
+      
+      const newUser = user[0]; 
+      const newUserObject = {...newUser, number: newNumber}; 
+
+      noteService
+        .update(newUser.id, newUserObject)
+        .then(response => reloadPersons());
+
       return;
     }
 
@@ -80,17 +56,11 @@ const App = () => {
     setNewNumber('');
   };
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value);
-  }
+  const handleNameChange = (event) => setNewName(event.target.value);
 
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value);
-  }
+  const handleNumberChange = (event) => setNewNumber(event.target.value);
 
-  const handleFilter = (event) => {
-    setFilterName(event.target.value);
-  }
+  const handleFilter = (event) => setFilterName(event.target.value);
 
   const personsToShow = filterName
     ? persons.filter((person) => person.name.toLowerCase().includes(filterName.toLowerCase()))
