@@ -58,8 +58,8 @@ const App = () => {
 
     noteService
       .create({name : newName, number: newNumber, id: newId,})
+      .then(newPerson => setPersons(persons.concat(newPerson)))
 
-    setPersons(persons.concat({name : newName, number: newNumber, id: newId,}));
     setNewName('');
     setNewNumber('');
   };
