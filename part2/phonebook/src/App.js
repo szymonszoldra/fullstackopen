@@ -3,11 +3,27 @@ import noteService from './services/notes';
 
 const Filter = ({handler, value}) => <div>filter shown with <input onChange={handler} value={value}/></div>
 
-const Persons = ({ persons }) => {
+const SinglePerson = ({person, setPersons, persons}) => {
+
+  const handleDelete = () => {
+    if(!window.confirm(`Delete ${person.name}?`)) return;
+
+    noteService
+      .deletePerson(person.id)
+      .then(() => {
+        const arrayWithoutDeletedPerson = persons.filter((p) => p.id !== person.id);
+        setPersons(arrayWithoutDeletedPerson);
+      });
+  }
+
+  return <p key={person.name}>{person.name} {person.number} <button onClick={handleDelete}>delete</button></p>
+}
+
+const Persons = ({ persons, setPersons }) => {
   return (
     <>
       {persons.map((person) => (
-        <p key={person.name}>{person.name} {person.number}</p>
+        <SinglePerson setPersons={setPersons} key={person.id} person={person} persons={persons}/>
       ))}
     </>
   )
@@ -96,7 +112,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={personsToShow} />
+      <Persons setPersons={setPersons} persons={personsToShow} />
       
     </div>
   )
