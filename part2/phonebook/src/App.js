@@ -4,12 +4,14 @@ import noteService from './services/notes';
 import { Form } from './components/Form';
 import { Filter } from './components/Filter';
 import { Persons } from './components/Persons';
+import { Notification } from './components/Notification';
 
 const App = () => {
   const [ persons, setPersons ] = useState([]); 
   const [ newName, setNewName ] = useState('');
   const [ newNumber, setNewNumber ] = useState('');
   const [ filterName, setFilterName ] = useState('');
+  const [ message, setMessage ] = useState(null);
 
   useEffect(() => {
     noteService
@@ -27,6 +29,17 @@ const App = () => {
       })
   }
 
+  const sendMessage = (content, positive) => {
+    setMessage({
+      content,
+      positive
+    })
+
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
+  }
+
   const userAlreadyExists = (user) => user.length;
 
   const handleSubmit = (event) => {
@@ -41,7 +54,12 @@ const App = () => {
 
       noteService
         .update(newUser.id, newUserObject)
-        .then(response => reloadPersons());
+        .then(response => {
+          sendMessage(`Updated ${newUser.name}'s number`, true);
+          reloadPersons();
+          setNewName('');
+          setNewNumber('');
+        });
 
       return;
     }
@@ -50,7 +68,10 @@ const App = () => {
 
     noteService
       .create({name : newName, number: newNumber, id: newId,})
-      .then(newPerson => setPersons(persons.concat(newPerson)))
+      .then(newPerson => {
+        sendMessage(`Added ${newName}`, true);
+        setPersons(persons.concat(newPerson));
+      })
 
     setNewName('');
     setNewNumber('');
@@ -69,6 +90,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter handler={handleFilter} value={filterName}/>
       
       <h2>Add a new</h2>
