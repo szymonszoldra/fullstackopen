@@ -59,6 +59,10 @@ const App = () => {
           reloadPersons();
           setNewName('');
           setNewNumber('');
+        })
+        .catch((e) => {
+          sendMessage(`Information of ${newUser.name} has already been removed from server`, false);
+          console.log(e);
         });
 
       return;
