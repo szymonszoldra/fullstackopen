@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import noteService from './services/notes';
 
 const Filter = ({handler, value}) => <div>filter shown with <input onChange={handler} value={value}/></div>
 
@@ -34,8 +34,11 @@ const App = () => {
   const [ filterName, setFilterName ] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
-      .then((response) => setPersons(response.data));
+    noteService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
   },[]);
 
 
@@ -51,7 +54,12 @@ const App = () => {
       return;
     }
 
-    setPersons(persons.concat({name : newName, number: newNumber}));
+    const newId = persons.reduce((m, person) => m = Math.max(m, person.id), 0) + 1;
+
+    noteService
+      .create({name : newName, number: newNumber, id: newId,})
+
+    setPersons(persons.concat({name : newName, number: newNumber, id: newId,}));
     setNewName('');
     setNewNumber('');
   };
