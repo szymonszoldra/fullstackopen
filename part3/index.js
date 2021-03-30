@@ -28,6 +28,11 @@ app.get('/api/notes', (request, response) => {
   response.json(notes);
 });
 
+app.get('/info', (request, response) => {
+  const time = new Date();
+  response.send(`<p>Phonebook has info for ${notes.length} people</p><p>${time.toGMTString()}</p>`);
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
