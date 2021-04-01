@@ -68,13 +68,11 @@ const App = () => {
       return;
     }
 
-    const newId = persons.reduce((m, person) => m = Math.max(m, person.id), 0) + 1;
-
     noteService
-      .create({name : newName, number: newNumber, id: newId,})
-      .then(newPerson => {
+      .create({name : newName, number: newNumber})
+      .then(newPersons => {
         sendMessage(`Added ${newName}`, true);
-        setPersons(persons.concat(newPerson));
+        setPersons(newPersons);
       })
 
     setNewName('');
