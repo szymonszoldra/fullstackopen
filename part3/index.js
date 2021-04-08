@@ -71,18 +71,29 @@ app.delete('/api/persons/:id', (request, response) => {
   }
 });
 
-app.post('/api/persons', (request, response) => {
-  const id = Math.floor(Math.random() * 1000000);
+app.post('/api/persons', async (request, response) => {
   const {name, number} = request.body;
-  const userExists = persons.filter(person => person.name.toLowerCase() === name.toLowerCase()).length;
+  // const userExists = persons.filter(person => person.name.toLowerCase() === name.toLowerCase()).length;
+
+  // if (!name || !name?.length || !number || !number?.length) {
+  //   response.status(404).send({ error: 'parameter missing' })
+  // } else if (userExists) {
+  //   response.status(404).send({ error: 'user already in phonebook' })
+  // } else {
+  //   persons.push({id, name, number});
+  //   response.json(persons);
+  // }
 
   if (!name || !name?.length || !number || !number?.length) {
     response.status(404).send({ error: 'parameter missing' })
-  } else if (userExists) {
-    response.status(404).send({ error: 'user already in phonebook' })
   } else {
-    persons.push({id, name, number});
-    response.json(persons);
+
+    const person = new Person({ name, number });
+
+    await person.save();
+  
+    const persons = await Person.find({});
+    response.json(persons);  
   }
 });
 
