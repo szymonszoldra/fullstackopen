@@ -59,39 +59,24 @@ app.get('/api/persons/:id', (request, response) => {
   }
 });
 
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  const newPersons = persons.filter(person => person.id !== id);
-
-  if (newPersons.length === persons.length) {
-    response.status(404).end();
-  } else {
-    persons = newPersons;
+app.delete('/api/persons/:id', async (request, response) => {
+  try {
+    await Person.findByIdAndRemove(request.params.id);
+    const persons = await Person.find({});
     response.json(persons);
+  } catch (e) {
+    console.log(error, e);
   }
 });
 
 app.post('/api/persons', async (request, response) => {
   const {name, number} = request.body;
-  // const userExists = persons.filter(person => person.name.toLowerCase() === name.toLowerCase()).length;
-
-  // if (!name || !name?.length || !number || !number?.length) {
-  //   response.status(404).send({ error: 'parameter missing' })
-  // } else if (userExists) {
-  //   response.status(404).send({ error: 'user already in phonebook' })
-  // } else {
-  //   persons.push({id, name, number});
-  //   response.json(persons);
-  // }
 
   if (!name || !name?.length || !number || !number?.length) {
     response.status(404).send({ error: 'parameter missing' })
   } else {
-
     const person = new Person({ name, number });
-
     await person.save();
-  
     const persons = await Person.find({});
     response.json(persons);  
   }
