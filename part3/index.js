@@ -69,7 +69,7 @@ app.post('/api/persons', async (request, response, next) => {
   }
 });
 
-app.put('/api/persons/:id', async (request, response) => {
+app.put('/api/persons/:id', async (request, response, next) => {
   try {
     const {name, number} = request.body;
 
@@ -79,7 +79,7 @@ app.put('/api/persons/:id', async (request, response) => {
 
     const person = {name, number};
 
-    await Person.findByIdAndUpdate(request.params.id, person, {new: true});
+    await Person.findByIdAndUpdate(request.params.id, person, {new: true, runValidators: true, context: 'query'});
 
     const persons = await Person.find({});
     response.json(persons);

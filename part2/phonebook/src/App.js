@@ -61,7 +61,7 @@ const App = () => {
           setNewNumber('');
         })
         .catch((e) => {
-          sendMessage(`Information of ${newUser.name} has already been removed from server`, false);
+          sendMessage(e.response.data.error, false);
           console.log(e);
         });
 
@@ -73,6 +73,9 @@ const App = () => {
       .then(newPersons => {
         sendMessage(`Added ${newName}`, true);
         setPersons(newPersons);
+      })
+      .catch((e) => {
+        sendMessage(e.response.data.error, false);
       })
 
     setNewName('');
