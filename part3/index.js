@@ -37,15 +37,23 @@ let persons = [
   },
 ];
 
-app.get('/api/persons', (request, response) => {
-  Person.find({}).then(persons => {
+app.get('/api/persons', async (request, response, next) => {
+  try {
+    const persons = await Person.find({});
     response.json(persons);
-  })
+  } catch (e) {
+    next(e);
+  }
 });
 
-app.get('/info', (request, response) => {
-  const time = new Date();
-  response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${time.toGMTString()}</p>`);
+app.get('/info', async (request, response, next) => {
+  try {
+    const time = new Date();
+    const length = await Person.countDocuments({});
+    response.send(`<p>Phonebook has info for ${length} people</p><p>${time.toGMTString()}</p>`);
+  } catch (e) {
+    next(e);
+  }
 });
 
 app.get('/api/persons/:id', (request, response) => {
@@ -81,6 +89,24 @@ app.post('/api/persons', async (request, response) => {
     response.json(persons);  
   }
 });
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' });
+};
+
+app.use(unknownEndpoint);
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === 'CastError') {
+    return res.status(400).send({ error: 'malformatted id' });
+  } 
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
