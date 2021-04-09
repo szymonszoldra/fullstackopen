@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 
 const Person = require('./models/person');
+const { request, response } = require('express');
 
 const app = express();
 
@@ -88,6 +89,26 @@ app.post('/api/persons', async (request, response) => {
     const persons = await Person.find({});
     response.json(persons);  
   }
+});
+
+app.put('/api/persons/:id', async (request, response) => {
+  try {
+    const {name, number} = request.body;
+
+    if (!number.length) {
+      return response.status(400).end();
+    }
+    
+    const person = {name, number};
+
+    await Person.findByIdAndUpdate(request.params.id, person, {new: true});
+
+    const persons = await Person.find({});
+    response.json(persons);
+  } catch (e) {
+    next(e);
+  }
+  response.status(401).end();
 });
 
 const unknownEndpoint = (request, response) => {
