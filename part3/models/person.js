@@ -8,13 +8,13 @@ mongoose.connect(url, {
   useUnifiedTopology: true,
   useFindAndModify: false,
   useCreateIndex: true
- })
-  .then(result => {
+})
+  .then(() => {
     console.log('connected to MongoDB');
   })
   .catch((error) => {
     console.log('error connecting to MongoDB:', error.message);
-});
+  });
 
 const personSchema = new mongoose.Schema({
   name: {

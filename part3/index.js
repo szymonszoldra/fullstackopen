@@ -9,7 +9,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-morgan.token('body', (req, res) => JSON.stringify(req.body));
+morgan.token('body', (req) => JSON.stringify(req.body));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body '));
 
 app.use(express.static('build'));
@@ -48,22 +48,22 @@ app.delete('/api/persons/:id', async (request, response, next) => {
     const persons = await Person.find({});
     response.json(persons);
   } catch (e) {
-    next(e)
+    next(e);
   }
 });
 
 app.post('/api/persons', async (request, response, next) => {
-  const {name, number} = request.body;
+  const { name, number } = request.body;
 
   if (!name || !name?.length || !number || !number?.length) {
-    return response.status(400).send({ error: 'parameter missing' })
-  };
+    return response.status(400).send({ error: 'parameter missing' });
+  }
 
   try {
     const person = new Person({ name, number });
     await person.save();
     const persons = await Person.find({});
-    response.json(persons);  
+    response.json(persons);
   } catch (e) {
     next(e);
   }
@@ -71,22 +71,21 @@ app.post('/api/persons', async (request, response, next) => {
 
 app.put('/api/persons/:id', async (request, response, next) => {
   try {
-    const {name, number} = request.body;
+    const { name, number } = request.body;
 
     if (!number.length) {
-      return response.status(400).send({error: 'parameter missing' });
+      return response.status(400).send({ error: 'parameter missing' });
     }
 
-    const person = {name, number};
+    const person = { name, number };
 
-    await Person.findByIdAndUpdate(request.params.id, person, {new: true, runValidators: true, context: 'query'});
+    await Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: 'query' });
 
     const persons = await Person.find({});
     return response.json(persons);
   } catch (e) {
     next(e);
   }
-  response.status(401).end();
 });
 
 const unknownEndpoint = (request, response) => {
@@ -101,7 +100,7 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' });
   } else if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
