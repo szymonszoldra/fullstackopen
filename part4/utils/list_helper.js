@@ -50,10 +50,39 @@ const mostBlogs = (blogs) => {
   };
 };
 
+const mostLikes = (blogs) => {
+  if (!blogs.length) return {};
+
+  // Unnecessary, function will work correctly but there's no reason to do rest of the code if I can return it at the beginning.
+  if (blogs.length === 1) return {
+    author: blogs[0].author,
+    likes: blogs[0].likes
+  };
+
+  const authors = {};
+
+  blogs.forEach((blog) => {
+    if (blog.author in authors ) {
+      authors[blog.author]+= blog.likes;
+    } else {
+      authors[blog.author] = blog.likes;
+    }
+  });
+
+  // Simple JavaScript sort, author with most likes will be at index of 0.
+  const authorWithMostLikes = Object.keys(authors).sort((a, b) => authors[b] - authors[a])[0];
+
+  return {
+    author: authorWithMostLikes,
+    likes: authors[authorWithMostLikes]
+  };
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 };
 

@@ -126,3 +126,29 @@ describe('most blogs', () => {
     });
   });
 });
+
+describe('most likes', () => {
+  test('of empty list is empty object', () => {
+    const result = listHelper.mostLikes([]);
+
+    expect(result).toEqual({});
+  });
+
+  test('when list has only one blog returns author and correct likes number', () => {
+    const result = listHelper.mostLikes([blogs[0]]);
+
+    expect(result).toEqual({
+      author: 'Michael Chan',
+      likes: 7
+    });
+  });
+
+  test('of bigger list returns correct answer', () => {
+    const result = listHelper.mostLikes(blogs);
+
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 17
+    });
+  });
+});
