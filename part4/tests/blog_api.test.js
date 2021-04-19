@@ -85,6 +85,30 @@ describe('addition of a new blog', () => {
 
     expect(blog.likes).toEqual(0);
   });
+
+  test('with title or url missing will pursue to status 400', async () => {
+    const blogWithMissingTitle = {
+      author: 'Example Author',
+      url: 'exampleURL.com',
+      likes: 15
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(blogWithMissingTitle)
+      .expect(400);
+
+    const blogWithMissingUrl = {
+      author: 'Example Author',
+      title: 'Example Blog',
+      likes: 15
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(blogWithMissingUrl)
+      .expect(400);
+  });
 });
 
 afterAll(() => {
