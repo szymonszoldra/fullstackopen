@@ -123,6 +123,38 @@ describe('deleting blog', () => {
 
     expect(blogsBefore - blogsAfter).toEqual(1);
   });
+
+  test('fails with nonexistent id', async () => {
+    await api
+      .delete(`/api/blogs/${1233333}`)
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+  });
+});
+
+describe('updating blog', () => {
+  test('succeds with valid id', async () => {
+    const id = helper.initialBlogs[0]._id;
+    const likes = 100;
+
+    await api
+      .put(`/api/blogs/${id}`)
+      .send({ likes })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const response = await Blog.findById(id);
+
+    expect(response.likes).toEqual(likes);
+  });
+
+  test('fails with nonexistent id', async() => {
+    await api
+      .put('/api/blogs/12321313')
+      .send({ likes: 1000 })
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+  });
 });
 
 afterAll(() => {
