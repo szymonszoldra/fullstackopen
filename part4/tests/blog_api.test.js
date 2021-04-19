@@ -67,6 +67,24 @@ describe('addition of a new blog', () => {
     const contents = blogsAtTheEnd.map(blog => blog.title);
     expect(contents).toContain('Canonical string reduction');
   });
+
+  test('without likes property sets default value for likes to 0', async () => {
+    const blogWithoutLikes = {
+      title: 'First class tests',
+      author: 'Robert C. Martin',
+      url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(blogWithoutLikes)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const blog = await Blog.findOne({ title: blogWithoutLikes.title });
+
+    expect(blog.likes).toEqual(0);
+  });
 });
 
 afterAll(() => {
