@@ -38,6 +38,12 @@ describe('when there is initially some blogs saved', () => {
     const contents = response.body.map(blog => blog.title);
     expect(contents).toContain('React patterns');
   });
+
+  test('blog has id property', async () => {
+    const response = await api.get('/api/blogs');
+
+    expect(response.body[0].id).toBeDefined();
+  });
 });
 
 afterAll(() => {
