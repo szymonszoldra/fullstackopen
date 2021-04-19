@@ -46,6 +46,29 @@ describe('when there is initially some blogs saved', () => {
   });
 });
 
+describe('addition of a new blog', () => {
+  test('succeds with valid data', async () => {
+    const newBlog = {
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      likes: 12,
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const blogsAtTheEnd = await helper.blogsInDb();
+    expect(blogsAtTheEnd).toHaveLength(helper.initialBlogs.length + 1);
+
+    const contents = blogsAtTheEnd.map(blog => blog.title);
+    expect(contents).toContain('Canonical string reduction');
+  });
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
