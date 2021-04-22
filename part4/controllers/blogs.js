@@ -38,6 +38,21 @@ blogsRouter.post('/', async (request, response) => {
 });
 
 blogsRouter.delete('/:id', async (request, response) => {
+  if (!request.token) {
+    return response.status(401).json({ error: 'token missing or invalid' });
+  }
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+
+  if (!decodedToken?.id) {
+    return response.status(401).json({ error: 'token missing or invalid' });
+  }
+
+  const blog = await Blog.findById(request.params.id);
+  console.log(blog);
+  if (blog?.user?.toString() !== decodedToken.id.toString()) {
+    return response.status(401).json({ error: 'you do not have permission to delete this blog ' });
+  }
+
   await Blog.findByIdAndDelete(request.params.id);
   response.status(200).end();
 });
