@@ -1,25 +1,14 @@
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
-const User = require('../models/user');
-const jwt = require('jsonwebtoken');
+const { tokenExtractor } = require('../utils/middleware');
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 } );
   response.json(blogs);
 });
 
-blogsRouter.post('/', async (request, response) => {
-  if (!request.token) {
-    return response.status(401).json({ error: 'token missing or invalid' });
-  }
-
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
-
-  if (!decodedToken?.id) {
-    return response.status(401).json({ error: 'token missing or invalid' });
-  }
-
-  const user = await User.findById(decodedToken.id);
+blogsRouter.post('/', tokenExtractor, async (request, response) => {
+  const { user } = request;
 
   const data = {
     title: request.body.title,
@@ -37,19 +26,12 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog);
 });
 
-blogsRouter.delete('/:id', async (request, response) => {
-  if (!request.token) {
-    return response.status(401).json({ error: 'token missing or invalid' });
-  }
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
-
-  if (!decodedToken?.id) {
-    return response.status(401).json({ error: 'token missing or invalid' });
-  }
+blogsRouter.delete('/:id', tokenExtractor, async (request, response) => {
+  const { user } = request;
 
   const blog = await Blog.findById(request.params.id);
-  console.log(blog);
-  if (blog?.user?.toString() !== decodedToken.id.toString()) {
+
+  if (blog?.user?.toString() !== user.id.toString()) {
     return response.status(401).json({ error: 'you do not have permission to delete this blog ' });
   }
 
