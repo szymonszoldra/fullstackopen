@@ -18,6 +18,14 @@ const initialBlogs = [
     likes: 5,
     __v: 0
   },
+  {
+    _id: '5a422ba71b54a676234d17f9',
+    title: 'TDD harms architecture',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
+    likes: 0,
+    __v: 0
+  },
 ];
 
 const blogsInDb = async () => {

@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const supertest = require('supertest');
+const jwt = require('jsonwebtoken');
 const Blog = require('../models/blog');
+const User = require('../models/user');
 
 const helper = require('./test_helper');
 
@@ -8,14 +10,38 @@ const app = require('../app');
 
 const api = supertest(app);
 
+let exampleUserToken;
+
 beforeEach(async () => {
   await Blog.deleteMany({});
+  const credentials = {
+    username: 'testUser',
+    name: 'test User',
+    password: 'passwd'
+  };
+
+  await User.deleteMany({});
+
+  await api.post('/api/users').send(credentials);
+
+  const response = await api
+    .post('/api/login')
+    .send({ username: credentials.username, password: credentials.password });
+
+  const exampleUser = jwt.verify(response.body.token, process.env.SECRET);
 
   const blogObjects = helper.initialBlogs
-    .map(blog => new Blog(blog));
+    .map(blog => new Blog({ ...blog, user: exampleUser.id }));
 
-  const promiseArray = blogObjects.map(blog => blog.save());
+  const user = await User.findById(exampleUser.id);
+
+  const promiseArray = blogObjects.map(async (blog) => {
+    blog.save();
+    user.blogs = user.blogs.concat(blog.id);
+  });
   await Promise.all(promiseArray);
+  await user.save();
+  exampleUserToken = response.body.token;
 });
 
 describe('when there is initially some blogs saved', () => {
@@ -57,6 +83,7 @@ describe('addition of a new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${exampleUserToken}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -78,6 +105,7 @@ describe('addition of a new blog', () => {
     await api
       .post('/api/blogs')
       .send(blogWithoutLikes)
+      .set('Authorization', `bearer ${exampleUserToken}`)
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
@@ -95,6 +123,7 @@ describe('addition of a new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${exampleUserToken}`)
       .send(blogWithMissingTitle)
       .expect(400);
 
@@ -106,8 +135,46 @@ describe('addition of a new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${exampleUserToken}`)
       .send(blogWithMissingUrl)
       .expect(400);
+  });
+
+  test('without the token fails', async () => {
+    const newBlog = {
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      likes: 12,
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/);
+
+    const blogsAtTheEnd = await helper.blogsInDb();
+    expect(blogsAtTheEnd).toHaveLength(helper.initialBlogs.length);
+  });
+
+  test('with invalid token fails', async () => {
+    const newBlog = {
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      likes: 12,
+    };
+
+    await api
+      .post('/api/blogs')
+      .set('Authorization', `bearer x${exampleUserToken.substring(1)}`)
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/);
+
+    const blogsAtTheEnd = await helper.blogsInDb();
+    expect(blogsAtTheEnd).toHaveLength(helper.initialBlogs.length);
   });
 });
 
@@ -117,6 +184,7 @@ describe('deleting blog', () => {
 
     await api
       .delete(`/api/blogs/${helper.initialBlogs[0]._id}`)
+      .set('Authorization', `bearer ${exampleUserToken}`)
       .expect(200);
 
     const blogsAfter = await Blog.countDocuments();
@@ -127,8 +195,60 @@ describe('deleting blog', () => {
   test('fails with nonexistent id', async () => {
     await api
       .delete(`/api/blogs/${1233333}`)
+      .set('Authorization', `bearer ${exampleUserToken}`)
       .expect(400)
       .expect('Content-Type', /application\/json/);
+  });
+
+  test('fails without the token', async () => {
+    const blogsBefore = await Blog.countDocuments();
+
+    await api
+      .delete(`/api/blogs/${helper.initialBlogs[0]._id}`)
+      .expect(401);
+
+    const blogsAfter = await Blog.countDocuments();
+
+    expect(blogsBefore - blogsAfter).toEqual(0);
+  });
+
+  test('fails with invalid token', async () => {
+    const blogsBefore = await Blog.countDocuments();
+
+    await api
+      .delete(`/api/blogs/${helper.initialBlogs[1]._id}`)
+      .set('Authorization', `bearer x${exampleUserToken.substring(1)}`)
+      .expect(401);
+
+    const blogsAfter = await Blog.countDocuments();
+
+    expect(blogsBefore - blogsAfter).toEqual(0);
+  });
+
+  test('with valid token that is not the author\'s token fails', async () => {
+    const credentials = {
+      username: 'testUser2',
+      name: 'test User2',
+      password: 'passwd'
+    };
+    await api.post('/api/users').send(credentials);
+
+    const response = await api
+      .post('/api/login')
+      .send({ username: credentials.username, password: credentials.password });
+
+    const blogsBefore = await Blog.countDocuments();
+
+    const response2 =await api
+      .delete(`/api/blogs/${helper.initialBlogs[2]._id}`)
+      .set('Authorization', `bearer ${response.body.token}`)
+      .expect(401)
+      .expect('Content-Type', /application\/json/);
+
+    const blogsAfter = await Blog.countDocuments();
+
+    expect(blogsBefore - blogsAfter).toEqual(0);
+    expect(response2.body.error).toContain('you do not have permission to delete this blog ');
   });
 });
 
