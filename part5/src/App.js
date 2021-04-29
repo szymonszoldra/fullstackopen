@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Blog from './components/Blog';
+import Notification from './components/Notification';
 import blogService from './services/blogs';
 import loginService from './services/login';
 
@@ -10,6 +11,7 @@ const App = () => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
+  const [message, setMessage] = useState(null);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -48,7 +50,9 @@ const App = () => {
       setUser(user);
       setUsername('');
       setPassword('');
+      sendMessage('you are now logged in', true);
     } catch (exception) {
+      sendMessage('Wrong credentials', false);
       console.error('Error : ', exception);
     }
   }
@@ -65,7 +69,9 @@ const App = () => {
       setTitle('');
       setAuthor('');
       setUrl('');
+      sendMessage(`a new blog ${newBlog.title} added`, true);
     } catch (exception) {
+      sendMessage('Something went wrong', false);
       console.error('Error : ', exception);
     }
   }
@@ -74,38 +80,52 @@ const App = () => {
     window.localStorage.removeItem('loggedBloglistUser');
     blogService.setToken(null);
     setUser(null);
+    sendMessage('you are now logged out', true)
+  }
+
+  const sendMessage = (content, positive) => {
+    setMessage({
+      content,
+      positive
+    });
+
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
   }
 
   if (user === null) {
     return (
       <form onSubmit={handleLogin}>
-      <h2>log in to application</h2>
-      <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>      
+        <Notification message={message} />
+        <h2>log in to application</h2>
+        <div>
+          username
+            <input
+            type="text"
+            value={username}
+            name="Username"
+            onChange={({ target }) => setUsername(target.value)}
+          />
+        </div>
+        <div>
+          password
+            <input
+            type="password"
+            value={password}
+            name="Password"
+            onChange={({ target }) => setPassword(target.value)}
+          />
+        </div>
+        <button type="submit">login</button>
+      </form>      
     )
   }
 
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={message} />
       <p>{user.name} logged in <button onClick={logout}>log out</button></p>
       <form onSubmit={handleAddNewBlog}>
       <h2>create new</h2>
