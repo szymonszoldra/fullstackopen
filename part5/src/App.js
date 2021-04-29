@@ -40,7 +40,7 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    
+
     try {
       const user = await loginService.login({
         username, password,
@@ -59,7 +59,7 @@ const App = () => {
       sendMessage('Wrong credentials', false);
       console.error('Error : ', exception);
     }
-  }
+  };
 
   const handleAddNewBlog = async (blogObject) => {
     try {
@@ -71,14 +71,14 @@ const App = () => {
       sendMessage('Something went wrong', false);
       console.error('Error : ', exception.message);
     }
-  }
+  };
 
   const logout = () => {
     window.localStorage.removeItem('loggedBloglistUser');
     blogService.setToken(null);
     setUser(null);
-    sendMessage('you are now logged out', true)
-  }
+    sendMessage('you are now logged out', true);
+  };
 
   const sendMessage = (content, positive) => {
     setMessage({
@@ -89,7 +89,7 @@ const App = () => {
     setTimeout(() => {
       setMessage(null);
     }, 5000);
-  }
+  };
 
   if (user === null) {
     return (
@@ -98,7 +98,7 @@ const App = () => {
         <h2>log in to application</h2>
         <div>
           username
-            <input
+          <input
             type="text"
             value={username}
             name="Username"
@@ -107,7 +107,7 @@ const App = () => {
         </div>
         <div>
           password
-            <input
+          <input
             type="password"
             value={password}
             name="Password"
@@ -115,8 +115,8 @@ const App = () => {
           />
         </div>
         <button type="submit">login</button>
-      </form>      
-    )
+      </form>
+    );
   }
 
   return (
@@ -125,14 +125,14 @@ const App = () => {
       <Notification message={message} />
       <p>{user.name} logged in <button onClick={logout}>log out</button></p>
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
-        <BlogForm handleAddNewBlog={handleAddNewBlog} /> 
+        <BlogForm handleAddNewBlog={handleAddNewBlog} />
       </Togglable>
-      
+
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} loggedUser={user.username} />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

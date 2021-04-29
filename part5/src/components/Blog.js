@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import blogService from '../services/blogs';
 import PropTypes from 'prop-types';
 
@@ -12,7 +12,7 @@ const Blog = ({ blog, blogs, setBlogs, loggedUser }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
-  }
+  };
 
   // In the excercise it was said that I have to send the whole blog object
   // but it seems that I implemented the backend controller differently.
@@ -24,16 +24,16 @@ const Blog = ({ blog, blogs, setBlogs, loggedUser }) => {
     } catch (exception) {
       console.error('Error : ', exception);
     }
-  }
+  };
 
   if (!showDetails) {
     return (
       <div style={blogStyle}>
         <p>
-         {blog.title} {blog.author} <button onClick={() => setShowDetails(true)}>view</button>
+          {blog.title} {blog.author} <button onClick={() => setShowDetails(true)}>view</button>
         </p>
-      </div> 
-    )
+      </div>
+    );
   }
 
   const deleteBlog = async () => {
@@ -41,7 +41,7 @@ const Blog = ({ blog, blogs, setBlogs, loggedUser }) => {
       await blogService.remove(blog.id);
       setBlogs(blogs.filter((b) => b.id !== blog.id));
     }
-  }
+  };
 
   const hasUserCreatedThatBlog = blog.user.username === loggedUser;
 
@@ -59,21 +59,21 @@ const Blog = ({ blog, blogs, setBlogs, loggedUser }) => {
       <p>
         {blog.user.name}
       </p>
-      { 
+      {
         hasUserCreatedThatBlog
-        ? <button onClick={deleteBlog}>remove</button>
-        : null
-       }
-      
-    </div> 
-  )
-}
+          ? <button onClick={deleteBlog}>remove</button>
+          : null
+      }
+
+    </div>
+  );
+};
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   blogs: PropTypes.array.isRequired,
   setBlogs: PropTypes.func.isRequired,
   loggedUser: PropTypes.string.isRequired
-}
+};
 
-export default Blog
+export default Blog;
