@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
+import blogService from '../services/blogs';
+
 const Blog = ({blog}) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [likes, setLikes] = useState(blog.likes);
 
   const blogStyle = {
     paddingTop: 10,
@@ -8,6 +11,16 @@ const Blog = ({blog}) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
+  }
+
+  const addLike = async () => {
+    try {
+      const response = await blogService.addLike(blog);
+      blog.likes = response.likes;
+      setLikes(response.likes);
+    } catch (exception) {
+      console.error('Error : ', exception);
+    }
   }
 
   if (!showDetails) {
@@ -29,7 +42,7 @@ const Blog = ({blog}) => {
         {blog.url}
       </p>
       <p>
-        likes {blog.likes} <button>like</button>
+        likes {likes} <button onClick={addLike}>like</button>
       </p>
       <p>
         {blog.user.name}
