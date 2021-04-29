@@ -21,7 +21,7 @@ const App = () => {
     async function getBlogs() {
       try {
         const fetchedBlogs = await blogService.getAll();
-        setBlogs(fetchedBlogs);
+        setBlogs(fetchedBlogs.sort((a, b) => b.likes - a.likes));
       } catch (exception) {
         console.error('Error: ', exception);
       }

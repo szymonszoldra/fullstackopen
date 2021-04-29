@@ -13,6 +13,8 @@ const Blog = ({blog}) => {
     marginBottom: 5
   }
 
+  // In the excercise it was said that I have to send the whole blog object
+  // but it seems that I implemented the backend controller differently.
   const addLike = async () => {
     try {
       const response = await blogService.addLike(blog);
