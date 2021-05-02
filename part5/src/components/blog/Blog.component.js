@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import blogService from '../services/blogs';
+import blogService from '../../services/blogs';
 import PropTypes from 'prop-types';
 
 const Blog = ({ blog, blogs, setBlogs, loggedUser }) => {
