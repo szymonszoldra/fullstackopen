@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import blogService from '../../services/blogs';
 import PropTypes from 'prop-types';
 
-const Blog = ({ blog, blogs, setBlogs, loggedUser }) => {
+const Blog = ({ blog, blogs, setBlogs, loggedUser, dummyHandlerForTest }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [likes, setLikes] = useState(blog.likes);
 
@@ -16,7 +16,7 @@ const Blog = ({ blog, blogs, setBlogs, loggedUser }) => {
 
   // In the excercise it was said that I have to send the whole blog object
   // but it seems that I implemented the backend controller differently.
-  const addLike = async () => {
+  let addLike = async () => {
     try {
       const response = await blogService.addLike(blog);
       blog.likes = response.likes;
@@ -25,6 +25,11 @@ const Blog = ({ blog, blogs, setBlogs, loggedUser }) => {
       console.error('Error : ', exception);
     }
   };
+
+  // JEST TEST task 5.15*, looks stupid but works without changing component
+  if (dummyHandlerForTest) {
+    addLike = dummyHandlerForTest;
+  }
 
   if (!showDetails) {
     return (

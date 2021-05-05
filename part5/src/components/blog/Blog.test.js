@@ -43,4 +43,21 @@ describe('Blog component', () => {
     expect(component.container).toHaveTextContent(blog.url);
     expect(component.container).toHaveTextContent(blog.likes);
   });
+
+  test('calls the event handler received as props twice when like button is clicked twice', () => {
+    const mockHandler = jest.fn();
+
+    const component = render(
+      <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} loggedUser={user} dummyHandlerForTest={mockHandler}/>
+    );
+
+    const button = component.getByText('view');
+    fireEvent.click(button);
+
+    const likeButton = component.getByText('like');
+    fireEvent.click(likeButton);
+    fireEvent.click(likeButton);
+
+    expect(mockHandler.mock.calls).toHaveLength(2);
+  });
 });
