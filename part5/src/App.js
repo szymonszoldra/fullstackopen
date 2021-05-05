@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Blog from './components/blog/Blog.component';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
-import BlogForm from './components/BlogForm';
+import BlogForm from './components/blogForm/BlogForm.component';
 
 import blogService from './services/blogs';
 import loginService from './services/login';
