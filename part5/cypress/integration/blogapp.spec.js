@@ -54,5 +54,35 @@ describe('Blog app', function() {
       cy.contains('like').click();
       cy.contains('likes 1');
     });
+
+    it('User can delete blog that he created', function() {
+      cy.visit('http://localhost:3000');
+      cy.contains('view').click();
+      cy.contains('Dan Abramov');
+      cy.contains('remove').click();
+      cy.contains('Dan Abramov').should('not.exist');
+    });
+
+    it.only('User can\'t delete blog that he didn\'t create', function() {
+      cy.contains('log out').click();
+
+      const user = {
+        name: 'John Smith',
+        username: 'john',
+        password: 'passwd'
+      };
+      cy.request('POST', 'http://localhost:3003/api/users/', user);
+
+      cy.login('john', 'passwd');
+
+      // There is a strange bug that happens only with cypress that after adding a new blog the blog.user is not an object but an ID
+      // after refreshing with cy.visit everything is fine, blog.user is an object populated with mongoose. I have no idea why tho.
+      cy.wait(1000);
+      cy.visit('http://localhost:3000');
+
+      cy.contains('view').click();
+      cy.contains('Szymon Sz');
+      cy.contains('remove').should('not.exist');
+    });
   });
 });
