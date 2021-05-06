@@ -44,6 +44,18 @@ Cypress.Commands.add('addExampleBlog', function() {
   cy.get('button[type="submit"]').click();
 });
 
+Cypress.Commands.add('newBlog', function(blog) {
+  const token = `Bearer ${JSON.parse(localStorage.getItem('loggedBloglistUser')).token}`;
+  cy.request({
+    url: 'http://localhost:3003/api/blogs',
+    method: 'POST',
+    body: blog,
+    headers: {
+      Authorization: token
+    }
+  });
+});
+
 Cypress.Commands.add('login', function(username, password) {
   cy.get('input[name="Username"]').type(username);
   cy.get('input[name="Password"]').type(password);

@@ -33,7 +33,7 @@ const Blog = ({ blog, blogs, setBlogs, loggedUser, dummyHandlerForTest }) => {
 
   if (!showDetails) {
     return (
-      <div style={blogStyle}>
+      <div style={blogStyle} className="blog">
         <p>
           {blog.title} {blog.author} <button onClick={() => setShowDetails(true)}>view</button>
         </p>
@@ -51,7 +51,7 @@ const Blog = ({ blog, blogs, setBlogs, loggedUser, dummyHandlerForTest }) => {
   const hasUserCreatedThatBlog = blog.user.username === loggedUser;
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       <p>
         {blog.title} {blog.author} <button onClick={() => setShowDetails(false)}>hide</button>
       </p>
@@ -59,7 +59,7 @@ const Blog = ({ blog, blogs, setBlogs, loggedUser, dummyHandlerForTest }) => {
         {blog.url}
       </p>
       <p>
-        likes {likes} <button onClick={addLike}>like</button>
+        likes <span className="number-of-likes">{likes}</span>{' '}<button onClick={addLike}>like</button>
       </p>
       <p>
         {blog.user.name}
