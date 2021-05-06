@@ -31,12 +31,13 @@ describe('Blog app', function() {
   describe('When logged in', function() {
     beforeEach(function() {
       cy.login('szymon', 'passwd');
+      cy.addExampleBlog();
     });
 
     it('A blog can be created', function() {
       cy.contains('Szymon Sz logged in');
 
-      cy.addExampleBlog();
+      // Moved logic to beforeEach, test is still valid tho.
       cy.get('.positive')
         .should('contain', 'added')
         .and('have.css', 'color', 'rgb(0, 128, 0)')
@@ -45,6 +46,13 @@ describe('Blog app', function() {
       cy.contains('new blog');
       cy.contains('Dan Abramov');
       cy.visit('http://localhost:3000');
+    });
+
+    it('User can like a blog', function() {
+      cy.contains('view').click();
+      cy.contains('likes 0');
+      cy.contains('like').click();
+      cy.contains('likes 1');
     });
   });
 });
