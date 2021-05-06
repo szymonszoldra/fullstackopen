@@ -1,12 +1,7 @@
+// custom commands can be found on /cypress/support/commands.js
 describe('Blog app', function() {
   beforeEach(function () {
-    cy.request('POST', 'http://localhost:3003/api/testing/reset');
-    const user = {
-      name: 'Szymon Sz',
-      username: 'szymon',
-      password: 'passwd'
-    };
-    cy.request('POST', 'http://localhost:3003/api/users/', user);
+    cy.setup();
     cy.visit('http://localhost:3000');
   });
 
@@ -19,22 +14,37 @@ describe('Blog app', function() {
 
   describe('Login',function() {
     it('succeeds with correct credentials', function() {
-      cy.get('input[name="Username"]').type('szymon');
-      cy.get('input[name="Password"]').type('passwd');
-      cy.contains('login').click();
-
+      cy.login('szymon', 'passwd');
       cy.contains('Szymon Sz logged in');
     });
 
     it('fails with wrong credentials', function() {
-      cy.get('input[name="Username"]').type('szymon');
-      cy.get('input[name="Password"]').type('wrongpassword');
-      cy.contains('login').click();
+      cy.login('szymon', 'wrongpassword');
 
       cy.get('.error')
         .should('contain', 'Wrong credentials')
         .and('have.css', 'color', 'rgb(255, 0, 0)')
         .and('have.css', 'border-style', 'solid');
+    });
+  });
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login('szymon', 'passwd');
+    });
+
+    it('A blog can be created', function() {
+      cy.contains('Szymon Sz logged in');
+
+      cy.addExampleBlog();
+      cy.get('.positive')
+        .should('contain', 'added')
+        .and('have.css', 'color', 'rgb(0, 128, 0)')
+        .and('have.css', 'border-style', 'solid');
+
+      cy.contains('new blog');
+      cy.contains('Dan Abramov');
+      cy.visit('http://localhost:3000');
     });
   });
 });
