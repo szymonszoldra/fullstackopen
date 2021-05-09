@@ -19,6 +19,8 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject);
 
+
+// 6.6: anecdotes, step4 ALREADY DONE
 export const voteForAnecdote = (id) => {
   return {
     type: 'VOTE',
