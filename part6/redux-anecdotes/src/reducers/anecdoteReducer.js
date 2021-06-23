@@ -39,7 +39,7 @@ export const addAnecdote = (anecdote) => {
   };
 };
 
-const reducer = (state = initialState, action) => {
+const anecdoteReducer = (state = initialState, action) => {
   switch(action.type) {
     case 'VOTE': {
       const anecdoteToVote = state.find(a => a.id === action.data);
@@ -63,4 +63,4 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-export default reducer;
+export default anecdoteReducer;
