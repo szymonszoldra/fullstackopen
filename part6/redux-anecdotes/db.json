@@ -2,7 +2,7 @@
   "anecdotes": [
     {
       "content": "If it hurts, do it more often",
-      "votes": 1,
+      "votes": 5,
       "id": "47145"
     },
     {
@@ -32,13 +32,8 @@
     },
     {
       "content": "E = mc2",
-      "votes": 13,
+      "votes": 24,
       "id": "95WT9y7"
-    },
-    {
-      "content": "LALALA",
-      "votes": 0,
-      "id": "q_4CpLT"
     }
   ]
 }

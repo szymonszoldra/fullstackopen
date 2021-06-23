@@ -3,10 +3,13 @@ const types = {
   HIDE_NOTIFICATION: 'HIDE_NOTIFICATION'
 }
 
-export const displayNotification = (message) => {
-  return {
-    type: types.DISPLAY_NOTIFICATION,
-    data: message
+export const displayNotification = (message, time) => {
+  return dispatch => {
+    dispatch({
+      type: types.DISPLAY_NOTIFICATION,
+      data: message
+    });
+    setTimeout(() => dispatch(hideNotification()), time * 1000);
   };
 };
 

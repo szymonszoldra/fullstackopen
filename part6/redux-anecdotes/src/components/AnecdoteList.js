@@ -13,8 +13,7 @@ const AnecdoteList = () => {
 
   const vote = (anecdote) => {
     dispatch(voteForAnecdote(anecdote));
-    dispatch(displayNotification(`VOTED FOR: ${anecdote.content}`));
-    setTimeout(() => dispatch(hideNotification()), 5000);
+    dispatch(displayNotification(`VOTED FOR: ${anecdote.content}`, 2));
   };
 
   useEffect(() => {
