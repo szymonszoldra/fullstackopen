@@ -8,11 +8,16 @@ const Notification = () => {
     padding: 10,
     borderWidth: 1
   }
-  return (
-    <div style={style}>
-      {notification}
-    </div>
-  );
+  if (notification.length) {
+    return (
+      <div style={style}>
+        {notification}
+      </div>
+    );
+  } else {
+    return null;
+  }
+  
 };
 
 export default Notification;
