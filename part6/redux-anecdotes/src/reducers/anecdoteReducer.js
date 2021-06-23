@@ -8,11 +8,14 @@ const types = {
 
 
 // 6.6: anecdotes, step4 ALREADY DONE
-export const voteForAnecdote = (id) => {
-  return {
-    type: types.VOTE,
-    data: id
-  }
+export const voteForAnecdote = (anecdote) => {
+  return async dispatch => {
+    await anecdoteService.vote(anecdote);
+    dispatch({
+      type: types.VOTE,
+      data: anecdote.id
+    });
+  };
 };
 
 export const addAnecdote = (content) => {
