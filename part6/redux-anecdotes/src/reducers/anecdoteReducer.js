@@ -19,18 +19,23 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject);
 
+const types = {
+  VOTE: 'VOTE',
+  ADD_ANECDOTE: 'ADD_ANECDOTE'
+};
+
 
 // 6.6: anecdotes, step4 ALREADY DONE
 export const voteForAnecdote = (id) => {
   return {
-    type: 'VOTE',
+    type: types.VOTE,
     data: id
   }
 };
 
 export const addAnecdote = (anecdote) => {
   return {
-    type: 'ADD_ANECDOTE',
+    type: types.ADD_ANECDOTE,
     data: {
       content: anecdote,
       id: getId(),
@@ -41,7 +46,7 @@ export const addAnecdote = (anecdote) => {
 
 const anecdoteReducer = (state = initialState, action) => {
   switch(action.type) {
-    case 'VOTE': {
+    case types.VOTE: {
       const anecdoteToVote = state.find(a => a.id === action.data);
       const votedAnectode = {
         ...anecdoteToVote,
@@ -52,7 +57,7 @@ const anecdoteReducer = (state = initialState, action) => {
         anecdote.id === action.data ? votedAnectode : anecdote
       )
     }
-    case 'ADD_ANECDOTE': {
+    case types.ADD_ANECDOTE: {
       return [
         ...state,
         action.data
