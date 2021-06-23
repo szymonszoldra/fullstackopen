@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { voteForAnecdote } from '../reducers/anecdoteReducer';
+import { voteForAnecdote, initAnecdotes } from '../reducers/anecdoteReducer';
 import { displayNotification, hideNotification } from '../reducers/notificationReducer';
+import anecdotesService from '../services/anecdotes';
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(state => {
@@ -16,6 +17,10 @@ const AnecdoteList = () => {
     dispatch(displayNotification(`VOTED FOR: ${content}`));
     setTimeout(() => dispatch(hideNotification()), 5000);
   };
+
+  useEffect(() => {
+    anecdotesService.getAll().then(anecdotes => dispatch(initAnecdotes(anecdotes)));
+  }, [dispatch]);
 
   return ( 
     <section>
