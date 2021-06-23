@@ -1,4 +1,4 @@
-import anecdoteServices from '../services/anecdotes';
+import anecdoteService from '../services/anecdotes';
 
 const types = {
   VOTE: 'VOTE',
@@ -15,21 +15,24 @@ export const voteForAnecdote = (id) => {
   }
 };
 
-export const addAnecdote = (anecdote) => {
-  return {
-    type: types.ADD_ANECDOTE,
-    data: anecdote
+export const addAnecdote = (content) => {
+  return async dispatch => {
+    const anecdote = await anecdoteService.createNew(content);
+    dispatch({
+      type: types.ADD_ANECDOTE,
+      data: anecdote
+    });
   };
 };
 
 export const initAnecdotes = (anecdotes) => {
   return async dispatch => {
-    const anecdotes = await anecdoteServices.getAll();
+    const anecdotes = await anecdoteService.getAll();
     dispatch({
       type: types.INIT_ANECTODES,
       data: anecdotes
     });
-  }
+  };
 };
 
 const anecdoteReducer = (state = [], action) => {
