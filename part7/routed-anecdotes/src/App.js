@@ -65,6 +65,7 @@ const CreateNew = (props) => {
     history.push('/');
   };
 
+  //7.6: anecdotes and hooks step3 already finished
   const handleResetForm = (e) => {
     e.preventDefault();
     resetContent();
