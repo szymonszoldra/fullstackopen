@@ -3,17 +3,25 @@ const types = {
   HIDE_NOTIFICATION: 'HIDE_NOTIFICATION'
 }
 
+let id = null;
+
 export const displayNotification = (message, time) => {
   return dispatch => {
+    if (id) {
+      clearTimeout(id);
+    }
+  
     dispatch({
       type: types.DISPLAY_NOTIFICATION,
       data: message
     });
-    setTimeout(() => dispatch(hideNotification()), time * 1000);
+    
+    id = setTimeout(() => dispatch(hideNotification()), time * 1000);
   };
 };
 
 export const hideNotification = () => {
+  id = null;
   return {
     type: types.HIDE_NOTIFICATION
   };
