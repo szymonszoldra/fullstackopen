@@ -14,6 +14,7 @@ import Togglable from './components/Togglable';
 import BlogForm from './components/blogForm/BlogForm.component';
 import Users from './components/users/Users.component';
 import IndividualUser from './components/individualUser/IndividualUser.component';
+import Navigation from './components/navigation/Navigation.component';
 
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -21,19 +22,15 @@ import loginService from './services/login';
 const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const user = useSelector(state => state.currentUser);
-
-  const blogFormRef = useRef();
   const dispatch = useDispatch();
-  const blogs = useSelector(state => state.blogs);
+  const blogFormRef = useRef();
 
+  const user = useSelector(state => state.currentUser);
+  const blogs = useSelector(state => state.blogs);
   const users = useSelector(state => state.users);
 
   useEffect(() => {
     dispatch(initUsers());
-  }, []);
-
-  useEffect(() => {
     dispatch(initBlogs());
   }, []);
 
@@ -134,7 +131,7 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification />
-      <p>{user.name} logged in <button onClick={logout}>log out</button></p>
+      <Navigation logout={logout}/>
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm handleAddNewBlog={handleAddNewBlog} />
       </Togglable>
