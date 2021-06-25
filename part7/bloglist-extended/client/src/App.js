@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { Switch, Route, useRouteMatch } from 'react-router-dom';
+import { Switch, Route, Link, useRouteMatch } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { displayNotification } from './redux/reducers/notificationReducer';
@@ -92,9 +92,14 @@ const App = () => {
     dispatch(displayNotification(content, positive));
   };
 
-  const match = useRouteMatch('/users/:id');
+  let match = useRouteMatch('/users/:id');
   const userInfo = match
     ? users.find(u => u.id === match.params.id)
+    : null;
+
+  match = useRouteMatch('/blogs/:id');
+  const blogInfo = match
+    ? blogs.find(b => b.id === match.params.id)
     : null;
 
   if (user === null) {
@@ -134,6 +139,9 @@ const App = () => {
         <BlogForm handleAddNewBlog={handleAddNewBlog} />
       </Togglable>
       <Switch>
+        <Route path='/blogs/:id'>
+          {blogInfo && <Blog blog={blogInfo} loggedUser={user.username} />}
+        </Route>
         <Route path='/users/:id'>
           <IndividualUser user={userInfo} />
         </Route>
@@ -142,7 +150,15 @@ const App = () => {
         </Route>
         <Route path='/'>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} loggedUser={user.username} />
+            <Link key={blog.id} to={`/blogs/${blog.id}`}>
+              <li style={{
+                paddingTop: 10,
+                paddingLeft: 2,
+                border: 'solid',
+                borderWidth: 1,
+                marginBottom: 5
+              }}>{blog.title}</li>
+            </Link>
           )}
         </Route>
       </Switch>

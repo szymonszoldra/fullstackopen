@@ -3,11 +3,12 @@ import blogService from '../../services/blogs';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { removeBlog } from '../../redux/reducers/blogReducer';
+import { useHistory } from 'react-router-dom';
 
-const Blog = ({ blog, loggedUser, dummyHandlerForTest }) => {
-  const [showDetails, setShowDetails] = useState(false);
+const Blog = ({ blog, loggedUser }) => {
   const [likes, setLikes] = useState(blog.likes);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const blogStyle = {
     paddingTop: 10,
@@ -17,9 +18,7 @@ const Blog = ({ blog, loggedUser, dummyHandlerForTest }) => {
     marginBottom: 5
   };
 
-  // In the excercise it was said that I have to send the whole blog object
-  // but it seems that I implemented the backend controller differently.
-  let addLike = async () => {
+  const addLike = async () => {
     try {
       const response = await blogService.addLike(blog);
       blog.likes = response.likes;
@@ -29,25 +28,11 @@ const Blog = ({ blog, loggedUser, dummyHandlerForTest }) => {
     }
   };
 
-  // JEST TEST task 5.15*, looks stupid but works without changing component
-  if (dummyHandlerForTest) {
-    addLike = dummyHandlerForTest;
-  }
-
-  if (!showDetails) {
-    return (
-      <div style={blogStyle} className="blog">
-        <p>
-          {blog.title} {blog.author} <button onClick={() => setShowDetails(true)}>view</button>
-        </p>
-      </div>
-    );
-  }
-
   const deleteBlog = async () => {
     if (window.confirm('Are you sure?')) {
       await blogService.remove(blog.id);
       dispatch(removeBlog(blog.id));
+      history.push('/');
     }
   };
 
@@ -56,7 +41,7 @@ const Blog = ({ blog, loggedUser, dummyHandlerForTest }) => {
   return (
     <div style={blogStyle} className="blog">
       <p>
-        {blog.title} {blog.author} <button onClick={() => setShowDetails(false)}>hide</button>
+        {blog.title} {blog.author}
       </p>
       <p>
         {blog.url}
@@ -78,7 +63,7 @@ const Blog = ({ blog, loggedUser, dummyHandlerForTest }) => {
 };
 
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
+  blog: PropTypes.object,
   loggedUser: PropTypes.string.isRequired
 };
 
