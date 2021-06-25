@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+
+import { Switch, Route } from 'react-router-dom';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { displayNotification } from './redux/reducers/notificationReducer';
 import { initBlogs, addBlog } from './redux/reducers/blogReducer';
@@ -8,6 +11,7 @@ import Blog from './components/blog/Blog.component';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import BlogForm from './components/blogForm/BlogForm.component';
+import Users from './components/users/Users.component';
 
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -116,9 +120,16 @@ const App = () => {
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm handleAddNewBlog={handleAddNewBlog} />
       </Togglable>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} loggedUser={user.username} />
-      )}
+      <Switch>
+        <Route path='/users'>
+          <Users />
+        </Route>
+        <Route path='/'>
+          {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} loggedUser={user.username} />
+          )}
+        </Route>
+      </Switch>
     </div>
   );
 };
