@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import blogService from '../../services/blogs';
 import PropTypes from 'prop-types';
 
-const Blog = ({ blog, blogs, setBlogs, loggedUser, dummyHandlerForTest }) => {
+const Blog = ({ blog, loggedUser, dummyHandlerForTest }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [likes, setLikes] = useState(blog.likes);
 
@@ -44,7 +44,6 @@ const Blog = ({ blog, blogs, setBlogs, loggedUser, dummyHandlerForTest }) => {
   const deleteBlog = async () => {
     if (window.confirm('Are you sure?')) {
       await blogService.remove(blog.id);
-      setBlogs(blogs.filter((b) => b.id !== blog.id));
     }
   };
 
@@ -76,8 +75,6 @@ const Blog = ({ blog, blogs, setBlogs, loggedUser, dummyHandlerForTest }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  blogs: PropTypes.array.isRequired,
-  setBlogs: PropTypes.func.isRequired,
   loggedUser: PropTypes.string.isRequired
 };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { displayNotification } from './redux/reducers/notificationReducer';
+import { initBlogs, addBlog } from './redux/reducers/blogReducer';
 
 import Blog from './components/blog/Blog.component';
 import Notification from './components/Notification';
@@ -11,24 +12,16 @@ import blogService from './services/blogs';
 import loginService from './services/login';
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
 
   const blogFormRef = useRef();
   const dispatch = useDispatch();
+  const blogs = useSelector(state => state.blogs);
 
   useEffect(() => {
-    async function getBlogs() {
-      try {
-        const fetchedBlogs = await blogService.getAll();
-        setBlogs(fetchedBlogs.sort((a, b) => b.likes - a.likes));
-      } catch (exception) {
-        console.error('Error: ', exception);
-      }
-    }
-    getBlogs();
+    dispatch(initBlogs());
   }, []);
 
   useEffect(() => {
@@ -66,7 +59,7 @@ const App = () => {
   const handleAddNewBlog = async (blogObject) => {
     try {
       const newBlog = await blogService.create(blogObject);
-      setBlogs(blogs.concat(newBlog));
+      dispatch(addBlog(newBlog));
       blogFormRef.current.toggleVisibility();
       sendMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`, true);
     } catch (exception) {
@@ -122,9 +115,8 @@ const App = () => {
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm handleAddNewBlog={handleAddNewBlog} />
       </Togglable>
-
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} loggedUser={user.username} />
+        <Blog key={blog.id} blog={blog} loggedUser={user.username} />
       )}
     </div>
   );
