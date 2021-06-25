@@ -4,7 +4,20 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 const NavigationContainer = styled.div`
+  display: flex;
   background-color: lightgray;
+  margin-bottom: 20px;
+  font-weight: bold;
+  p {
+    margin-left: 20px;
+    span {
+      color: green;
+    }
+  }
+
+  p:hover {
+    transform: scale(1.1);
+  }
 `;
 
 const Navigation = ({ logout }) => {
@@ -17,7 +30,7 @@ const Navigation = ({ logout }) => {
       <Link to='/users'>
         <p> users </p>
       </Link>
-      <p>{user.name} logged in <button onClick={logout}>log out</button></p>
+      <p><span>{user.name}</span> logged in <button onClick={logout}>log out</button></p>
     </NavigationContainer>
   );
 };

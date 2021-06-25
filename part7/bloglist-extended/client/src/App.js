@@ -16,6 +16,8 @@ import Users from './components/users/Users.component';
 import IndividualUser from './components/individualUser/IndividualUser.component';
 import Navigation from './components/navigation/Navigation.component';
 
+// import GlobalStyle from './globalStyles';
+
 import blogService from './services/blogs';
 import loginService from './services/login';
 
@@ -101,34 +103,38 @@ const App = () => {
 
   if (user === null) {
     return (
-      <form onSubmit={handleLogin}>
-        <Notification />
-        <h2>log in to application</h2>
-        <div>
+      <>
+        {/* <GlobalStyle /> */}
+        <form onSubmit={handleLogin}>
+          <Notification />
+          <h2>log in to application</h2>
+          <div>
           username
-          <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
+            <input
+              type="text"
+              value={username}
+              name="Username"
+              onChange={({ target }) => setUsername(target.value)}
+            />
+          </div>
+          <div>
           password
-          <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
+            <input
+              type="password"
+              value={password}
+              name="Password"
+              onChange={({ target }) => setPassword(target.value)}
+            />
+          </div>
+          <button type="submit">login</button>
+        </form>
+      </>
     );
   }
 
   return (
     <div>
+      {/* <GlobalStyle /> */}
       <h2>blogs</h2>
       <Notification />
       <Navigation logout={logout}/>
