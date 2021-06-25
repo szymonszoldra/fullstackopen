@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, useRouteMatch } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { displayNotification } from './redux/reducers/notificationReducer';
 import { initBlogs, addBlog } from './redux/reducers/blogReducer';
 import { loginUser } from './redux/reducers/currentUserReducer';
+import { initUsers } from './redux/reducers/usersReducer';
 
 import Blog from './components/blog/Blog.component';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import BlogForm from './components/blogForm/BlogForm.component';
 import Users from './components/users/Users.component';
+import IndividualUser from './components/individualUser/IndividualUser.component';
 
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -24,6 +26,12 @@ const App = () => {
   const blogFormRef = useRef();
   const dispatch = useDispatch();
   const blogs = useSelector(state => state.blogs);
+
+  const users = useSelector(state => state.users);
+
+  useEffect(() => {
+    dispatch(initUsers());
+  }, []);
 
   useEffect(() => {
     dispatch(initBlogs());
@@ -84,6 +92,11 @@ const App = () => {
     dispatch(displayNotification(content, positive));
   };
 
+  const match = useRouteMatch('/users/:id');
+  const userInfo = match
+    ? users.find(u => u.id === match.params.id)
+    : null;
+
   if (user === null) {
     return (
       <form onSubmit={handleLogin}>
@@ -121,8 +134,11 @@ const App = () => {
         <BlogForm handleAddNewBlog={handleAddNewBlog} />
       </Togglable>
       <Switch>
+        <Route path='/users/:id'>
+          <IndividualUser user={userInfo} />
+        </Route>
         <Route path='/users'>
-          <Users />
+          <Users users={users} />
         </Route>
         <Route path='/'>
           {blogs.map(blog =>
