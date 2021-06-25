@@ -22,7 +22,7 @@ const GlobalStyle = createGlobalStyle`
     padding: 10px;
     margin-bottom: 10px;
   }
-  
+
   // masterpiece : )
   button {
     background-color: orange;
@@ -36,5 +36,7 @@ const GlobalStyle = createGlobalStyle`
     background-color: royalblue;
   }
 `;
+
+// 7.21: Course feedback - could not login to the moodle
 
 export default GlobalStyle;
