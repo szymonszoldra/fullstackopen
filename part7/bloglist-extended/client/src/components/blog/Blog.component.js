@@ -39,26 +39,33 @@ const Blog = ({ blog, loggedUser }) => {
   const hasUserCreatedThatBlog = blog.user.username === loggedUser;
 
   return (
-    <div style={blogStyle} className="blog">
-      <p>
-        {blog.title} {blog.author}
-      </p>
-      <p>
-        {blog.url}
-      </p>
-      <p>
+    <>
+      <div style={blogStyle} className="blog">
+        <p>
+          {blog.title} {blog.author}
+        </p>
+        <p>
+          {blog.url}
+        </p>
+        <p>
         likes <span className="number-of-likes">{likes}</span>{' '}<button onClick={addLike}>like</button>
-      </p>
-      <p>
-        {blog.user.name}
-      </p>
-      {
-        hasUserCreatedThatBlog
-          ? <button onClick={deleteBlog}>remove</button>
-          : null
-      }
+        </p>
+        <p>
+          {blog.user.name}
+        </p>
+        {
+          hasUserCreatedThatBlog
+            ? <button onClick={deleteBlog}>remove</button>
+            : null
+        }
 
-    </div>
+      </div>
+      <h3>comments</h3>
+      <ul>
+        {blog.comments.map(comment => <li key={comment + blog.id}>{comment}</li>)}
+        {blog.comments.length === 0 ? 'No comments for this blog!' : null}
+      </ul>
+    </>
   );
 };
 
