@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { displayNotification } from './redux/reducers/notificationReducer';
 import { initBlogs, addBlog } from './redux/reducers/blogReducer';
+import { loginUser } from './redux/reducers/currentUserReducer';
 
 import Blog from './components/blog/Blog.component';
 import Notification from './components/Notification';
@@ -14,7 +15,7 @@ import loginService from './services/login';
 const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
+  const user = useSelector(state => state.currentUser);
 
   const blogFormRef = useRef();
   const dispatch = useDispatch();
@@ -28,7 +29,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser');
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      dispatch(loginUser(user));
       blogService.setToken(user.token);
     }
   }, []);
@@ -46,7 +47,7 @@ const App = () => {
       );
 
       blogService.setToken(user.token);
-      setUser(user);
+      dispatch(loginUser(user));
       setUsername('');
       setPassword('');
       sendMessage('you are now logged in', true);
@@ -71,7 +72,7 @@ const App = () => {
   const logout = () => {
     window.localStorage.removeItem('loggedBloglistUser');
     blogService.setToken(null);
-    setUser(null);
+    dispatch(loginUser(null));
     sendMessage('you are now logged out', true);
   };
 
