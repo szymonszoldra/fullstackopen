@@ -1,11 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import styled from 'styled-components';
+
+const NavigationContainer = styled.div`
+  background-color: lightgray;
+`;
 
 const Navigation = ({ logout }) => {
   const user = useSelector(state => state.currentUser);
   return (
-    <div>
+    <NavigationContainer>
       <Link to='/'>
         <p> blogs </p>
       </Link>
@@ -13,7 +18,7 @@ const Navigation = ({ logout }) => {
         <p> users </p>
       </Link>
       <p>{user.name} logged in <button onClick={logout}>log out</button></p>
-    </div>
+    </NavigationContainer>
   );
 };
 
