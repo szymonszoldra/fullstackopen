@@ -2,7 +2,8 @@ import blogService from '../../services/blogs';
 
 const types = {
   INIT: 'INIT',
-  ADD_BLOG: 'ADD_BLOG'
+  ADD_BLOG: 'ADD_BLOG',
+  REMOVE_BLOG: 'REMOVE_BLOG'
 };
 
 export const initBlogs = () => {
@@ -28,6 +29,13 @@ export const addBlog = (newBlog) => {
   };
 };
 
+export const removeBlog = (id) => {
+  return {
+    type: types.REMOVE_BLOG,
+    data: id
+  };
+};
+
 
 
 const blogsReducer = (state = [], action) => {
@@ -36,6 +44,10 @@ const blogsReducer = (state = [], action) => {
     return action.data;
   case types.ADD_BLOG:
     return state.concat(action.data);
+  case types.REMOVE_BLOG:
+    return state
+      .filter(blog => blog.id !== action.data)
+      .sort((a, b) => b.likes - a.likes);
   default:
     return state;
   }

@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import blogService from '../../services/blogs';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { removeBlog } from '../../redux/reducers/blogReducer';
 
 const Blog = ({ blog, loggedUser, dummyHandlerForTest }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [likes, setLikes] = useState(blog.likes);
+  const dispatch = useDispatch();
 
   const blogStyle = {
     paddingTop: 10,
@@ -44,6 +47,7 @@ const Blog = ({ blog, loggedUser, dummyHandlerForTest }) => {
   const deleteBlog = async () => {
     if (window.confirm('Are you sure?')) {
       await blogService.remove(blog.id);
+      dispatch(removeBlog(blog.id));
     }
   };
 
