@@ -92,7 +92,7 @@ const typeDefs = gql`
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks(author: String): [Book!]!
+    allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
   }
 
@@ -116,7 +116,12 @@ const resolvers = {
   Query: {
     bookCount: () => books.length,
     authorCount: () => authors.length,
-    allBooks: (root, args) => books.filter(book => book.author === args.author),
+    // Kinda hacky, could be much easier to understand with if statements.
+    // If the parameter isn't passed !args.parameter is truthy so there is no filtering.
+    // If the parameter is passed !args.parameter is falsy so there is filtering
+    allBooks: (root, args) => books
+                                .filter(book => book.author === args.author || !args.author)
+                                .filter(book => book.genres.includes(args.genre) || !args.genre),
     allAuthors: () => authors
   },
 
