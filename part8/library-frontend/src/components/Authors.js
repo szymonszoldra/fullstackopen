@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import Select from 'react-select';
 import { useQuery, useMutation } from '@apollo/client';
 
 import { ALL_AUTHORS, CHANGE_YEAR } from '../graphql';
 
 
 const Authors = (props) => {
-  const [name, setName] = useState('');
+  const [name, setName] = useState(null);
   const [year, setYear] = useState('');
 
   const authors = useQuery(ALL_AUTHORS);
@@ -22,10 +23,12 @@ const Authors = (props) => {
     return <div>loading...</div>
   }
 
+  const options = authors.data.allAuthors.map(author => ({value: author.name, label: author.name}));
+
   const handleUpdate = (e) => {
     e.preventDefault();
 
-    changeYear({ variables: { name, year}});
+    changeYear({ variables: { name: name.value, year}});
 
     setName('');
     setYear('');
@@ -57,7 +60,11 @@ const Authors = (props) => {
 
       <h3>Set birthyear</h3>
       <form onSubmit={handleUpdate}>
-        <p>name<input type="text" value={name} onChange={(e) => setName(e.target.value)}/></p>
+        <Select 
+          options={options}
+          onChange={setName}
+          defaultValue={name}
+        />
         <p>born<input type="number" value={year} onChange={(e) => setYear(Number(e.target.value))}/></p>
         <button>update</button>
       </form>

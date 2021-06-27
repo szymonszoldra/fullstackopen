@@ -146,7 +146,6 @@ const resolvers = {
 
   Mutation: {
     addBook: (root, args) => {
-      console.log(args);
       if (!authors.find(author => author.name === args.author)) {
         authors.push({
           name: args.author,
