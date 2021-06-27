@@ -1,11 +1,18 @@
-import React from 'react';
-import { useQuery } from '@apollo/client';
+import React, { useState } from 'react';
+import { useQuery, useMutation } from '@apollo/client';
 
-import { ALL_AUTHORS } from '../graphql';
+import { ALL_AUTHORS, CHANGE_YEAR } from '../graphql';
 
 
 const Authors = (props) => {
+  const [name, setName] = useState('');
+  const [year, setYear] = useState('');
+
   const authors = useQuery(ALL_AUTHORS);
+
+  const [changeYear] = useMutation(CHANGE_YEAR, {
+    refetchQueries: [ { query: ALL_AUTHORS} ]
+  });
 
   if (!props.show) {
     return null;
@@ -13,6 +20,15 @@ const Authors = (props) => {
   
   if (authors.loading)  {
     return <div>loading...</div>
+  }
+
+  const handleUpdate = (e) => {
+    e.preventDefault();
+
+    changeYear({ variables: { name, year}});
+
+    setName('');
+    setYear('');
   }
 
   return (
@@ -39,6 +55,12 @@ const Authors = (props) => {
         </tbody>
       </table>
 
+      <h3>Set birthyear</h3>
+      <form onSubmit={handleUpdate}>
+        <p>name<input type="text" value={name} onChange={(e) => setName(e.target.value)}/></p>
+        <p>born<input type="number" value={year} onChange={(e) => setYear(Number(e.target.value))}/></p>
+        <button>update</button>
+      </form>
     </div>
   );
 };
