@@ -28,6 +28,8 @@ const Authors = (props) => {
   const handleUpdate = (e) => {
     e.preventDefault();
 
+    if (!(year && name)) return;
+
     changeYear({ variables: { name: name.value, year}});
 
     setName('');
