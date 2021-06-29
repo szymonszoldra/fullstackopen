@@ -1,6 +1,5 @@
 require('dotenv').config();
-const { ApolloServer, gql } = require('apollo-server');
-const { v1: uuid } = require('uuid');
+const { ApolloServer, UserInputError, gql } = require('apollo-server');
 const mongoose = require('mongoose');
 const Author = require('./models/author');
 const Book = require('./models/book');
@@ -167,7 +166,14 @@ const resolvers = {
           name: args.author,
           born: null
         });
-        await author.save();
+
+        try {
+          await author.save();
+        } catch (error) {
+          throw new UserInputError(error.message, {
+            invalidArgs: args
+          });
+        }
       }
 
       const book = new Book({
@@ -177,7 +183,13 @@ const resolvers = {
         genres: args.genres
       });
 
-      await book.save();
+      try {
+        await book.save();
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args
+        });
+      }
 
       return Book.findById(book._id).populate('Author', { name: 1, born: 1});
     },
