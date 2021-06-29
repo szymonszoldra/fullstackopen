@@ -143,7 +143,12 @@ const resolvers = {
   Query: {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
-    allBooks: async (root) => await Book.find({}).populate('Author', { name: 1, born: 1}),
+    allBooks: async (root, args) =>  {
+      const books = await Book.find({}).populate('Author', { name: 1, born: 1});
+      return books
+                .filter(book => book.Author.name === args.author || !args.author)
+                .filter(book => book.genres.includes(args.genre) || !args.genre);
+    },
     allAuthors: () => Author.find({})
   },
 
@@ -177,14 +182,17 @@ const resolvers = {
       return Book.findById(book._id).populate('Author', { name: 1, born: 1});
     },
 
-    editAuthor: (root, args) => {
-      const author = authors.find(author => author.name === args.name);
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name });
       
-      if (!author) {
+      if ( !author ) {
         return null;
       }
 
       author.born = args.setBornTo;
+      
+      await author.save();
+
       return author;
     }
   }
