@@ -63,6 +63,8 @@ export const FAVORITE_GENRE = gql`
   }
 `;
 
+// 8.21 books by genre with GraphQL done in 8.20 already
+
 export const FAV_GENRE_MATCHING_BOOKS = gql`
   query findBook($genreToSearch: String!){
     allBooks(

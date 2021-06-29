@@ -11,7 +11,8 @@ const Recommendations = (props) => {
     if ( !favGenreQuery.loading ) {
       getMatchingBooks({ variables: { genreToSearch: favGenreQuery.data.me?.favoriteGenre }});
     }
-  }, [favGenreQuery]);
+    // eslint-disable-next-line
+  }, [favGenreQuery]); 
 
   useEffect(() => {
     if (matchingBooksResult.data) {
