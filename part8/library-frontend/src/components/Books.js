@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 
 import { ALL_BOOKS } from '../graphql';
 
 const Books = (props) => {
+  const [uniqueGenres, setUniqueGenres ] = useState([]);
+  const [currentGenre, setCurrentGenre] = useState('all genres');
   const books = useQuery(ALL_BOOKS);
+
+  useEffect(() => {
+    if (!books.loading) {
+      const temp = [];
+      books.data.allBooks.forEach(book => temp.push(...book.genres));
+      setUniqueGenres([...new Set(temp)]);
+    }
+  }, [books]);
 
   if (!props.show) {
     return null;
@@ -14,10 +24,17 @@ const Books = (props) => {
     return <div>loading...</div>
   }
 
+  const booksToShow = currentGenre === 'all genres'
+    ? books.data.allBooks
+    : books.data.allBooks.filter(book => book.genres.includes(currentGenre));
+
   return (
     <div>
       <h2>books</h2>
-
+      <button onClick={() => setCurrentGenre('all genres')}>all genres</button>
+      {uniqueGenres.map(genre => (
+        <button key={genre} onClick={() => setCurrentGenre(genre)}>{genre}</button>
+      ))}
       <table>
         <tbody>
           <tr>
@@ -29,7 +46,7 @@ const Books = (props) => {
               published
             </th>
           </tr>
-          {books.data.allBooks.map(a =>
+          {booksToShow.map(a =>
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.Author.name}</td>
