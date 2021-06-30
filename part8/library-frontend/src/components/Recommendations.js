@@ -10,6 +10,8 @@ const Recommendations = (props) => {
   useEffect(() => {
     if ( !favGenreQuery.loading ) {
       getMatchingBooks({ variables: { genreToSearch: favGenreQuery.data.me?.favoriteGenre }});
+      localStorage.removeItem('part8-fav-genre');
+      localStorage.setItem('part8-fav-genre', favGenreQuery.data.me?.favoriteGenre);
     }
     // eslint-disable-next-line
   }, [favGenreQuery]); 
