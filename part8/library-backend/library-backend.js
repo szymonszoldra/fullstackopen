@@ -104,9 +104,7 @@ const resolvers = {
   },
 
   Author: {
-    bookCount: async (root) => {
-      return await Book.countDocuments({ 'Author': root._id});
-    }
+    bookCount: async (root) => root.books.length
   },
 
   Mutation: {
@@ -122,7 +120,7 @@ const resolvers = {
           name: args.author,
           born: null
         });
-
+        
         try {
           await author.save();
         } catch (error) {
@@ -139,7 +137,9 @@ const resolvers = {
         genres: args.genres
       });
 
+      author.books = author.books.concat(book._id);
       try {
+        await author.save();
         await book.save();
       } catch (error) {
         throw new UserInputError(error.message, {
