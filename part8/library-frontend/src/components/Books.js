@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery, useSubscription } from '@apollo/client';
+import { useQuery, useSubscription, useApolloClient } from '@apollo/client';
 
 import { ALL_BOOKS, BOOK_ADDED } from '../graphql';
 
@@ -7,6 +7,7 @@ const Books = (props) => {
   const [uniqueGenres, setUniqueGenres ] = useState([]);
   const [currentGenre, setCurrentGenre] = useState('all genres');
   const books = useQuery(ALL_BOOKS);
+  const client = useApolloClient();
 
   useEffect(() => {
     if (!books.loading) {
@@ -16,10 +17,23 @@ const Books = (props) => {
     }
   }, [books]);
 
+  const updateCacheWith = (addedBook) => {
+    const includedIn = (oldBooks, newBook) => 
+      oldBooks.map(book => book.id).includes(newBook.id);
+
+    const dataInStore = client.readQuery({ query: ALL_BOOKS });
+    if ( !includedIn(dataInStore.allBooks, addedBook) ) {
+      client.writeQuery({
+        query: ALL_BOOKS,
+        data: { allBooks : dataInStore.allBooks.concat(addedBook) }
+      });
+    }   
+  };
+
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
-      console.log(subscriptionData);
-      alert('NEW BOOK ADDED');
+      updateCacheWith(subscriptionData.data.bookAdded);
+      alert('NEW BOOK ADDED TO LIBRARY');
     }
   });
 
