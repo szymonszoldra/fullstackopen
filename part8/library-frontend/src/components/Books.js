@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery, useSubscription } from '@apollo/client';
 
-import { ALL_BOOKS } from '../graphql';
+import { ALL_BOOKS, BOOK_ADDED } from '../graphql';
 
 const Books = (props) => {
   const [uniqueGenres, setUniqueGenres ] = useState([]);
@@ -15,6 +15,13 @@ const Books = (props) => {
       setUniqueGenres([...new Set(temp)]);
     }
   }, [books]);
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log(subscriptionData);
+      alert('NEW BOOK ADDED');
+    }
+  });
 
   if (!props.show) {
     return null;

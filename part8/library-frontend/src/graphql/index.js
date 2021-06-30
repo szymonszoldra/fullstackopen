@@ -69,16 +69,34 @@ export const FAVORITE_GENRE = gql`
 
 // 8.21 books by genre with GraphQL done in 8.20 already
 
+const BOOK_DETAILS = gql`
+  fragment BookDetails on Book {
+    title
+    Author {
+      name
+    }
+    published
+    genres
+  }
+`;
+
 export const FAV_GENRE_MATCHING_BOOKS = gql`
   query findBook($genreToSearch: String!){
     allBooks(
       genre: $genreToSearch
     ) {
-      title
-      Author {
-        name
-      }
-      published
+      ...BookDetails
     }
   }
+  ${BOOK_DETAILS}
+`;
+
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
+    }
+
+  }
+    ${BOOK_DETAILS}
 `;
