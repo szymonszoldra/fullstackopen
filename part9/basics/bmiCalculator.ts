@@ -2,7 +2,7 @@ interface BMICategory {
   lowBoundary: number,
   topBoundary: number,
   description: string
-};
+}
 
 const categories: ReadonlyArray<BMICategory> = [
   {
@@ -50,7 +50,7 @@ const categories: ReadonlyArray<BMICategory> = [
 interface ParsedArgs {
   height: number,
   weight: number
-};
+}
 
 const parseArguments = (args: ReadonlyArray<string>): ParsedArgs => {
   if (args.length < 4) throw new Error('Not enough arguments');
@@ -82,5 +82,6 @@ try {
   const { height, weight } = parseArguments(process.argv);
   console.log(calculateBmi(height, weight));
 } catch (e) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   console.log('Error, something bad happened, message: ', e.message);
 }

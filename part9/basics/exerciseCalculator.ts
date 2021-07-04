@@ -10,14 +10,14 @@ interface Result  {
   ratingDescription: string,
   target: number,
   average: number
-};
+}
 
 const getAverage = (arr: ReadonlyArray<number>): number => {
   return arr.reduce((acc, curr) => acc + curr , 0) / arr.length;
 };
 
 const getTrainingDays = (arr: ReadonlyArray<number>): number => {
-  return arr.filter(hours => hours).length
+  return arr.filter(hours => hours).length;
 };
 
 const getRating = (avg: number, averageTarget: number): number => {
@@ -42,7 +42,7 @@ const getRatingDescription = (rating: number): string => {
 interface ParsedArgs {
   target: number,
   days: Array<number>
-};
+}
 
 const parseArguments = (args: Array<string>): ParsedArgs => {
   if ( args.length < 4 ) {
@@ -67,8 +67,8 @@ const parseArguments = (args: Array<string>): ParsedArgs => {
 
 const exerciseCalculator = (trainingArray: ReadonlyArray<number>, averageTarget: number): Result => {
   const avg: number = getAverage(trainingArray);
-  let rating: number = getRating(avg, averageTarget);
-  let ratingDescription: string = getRatingDescription(rating);
+  const rating: number = getRating(avg, averageTarget);
+  const ratingDescription: string = getRatingDescription(rating);
 
   return {
     periodLength: trainingArray.length,
@@ -85,5 +85,6 @@ try {
   const { target, days } = parseArguments(process.argv);
   console.log(console.log(exerciseCalculator(days, target)));
 } catch (e) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   console.log('Error, something bad happened, message: ', e.message);
 }
