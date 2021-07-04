@@ -66,7 +66,8 @@ const parseArguments = (args: ReadonlyArray<string>): ParsedArgs => {
   }
 };
 
-const calculateBmi = (height: number, weight: number): string => {
+// it always returns string but TS doesn't know that 
+const calculateBmi = (height: number, weight: number): string | void => {
   const heightInMeters: number = height / 100;
   const BMI: number = weight / (heightInMeters*heightInMeters);
   
