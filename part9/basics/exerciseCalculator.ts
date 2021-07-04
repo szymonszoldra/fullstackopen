@@ -44,7 +44,7 @@ interface ParsedArgs {
   days: Array<number>
 }
 
-const parseArguments = (args: Array<string>): ParsedArgs => {
+export const parseArguments = (args: Array<string>): ParsedArgs => {
   if ( args.length < 4 ) {
     throw new Error('Not enough arguments');
   }
@@ -65,7 +65,7 @@ const parseArguments = (args: Array<string>): ParsedArgs => {
   };
 };
 
-const exerciseCalculator = (trainingArray: ReadonlyArray<number>, averageTarget: number): Result => {
+export const exerciseCalculator = (trainingArray: ReadonlyArray<number>, averageTarget: number): Result => {
   const avg: number = getAverage(trainingArray);
   const rating: number = getRating(avg, averageTarget);
   const ratingDescription: string = getRatingDescription(rating);
