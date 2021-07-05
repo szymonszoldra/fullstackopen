@@ -10,10 +10,10 @@
   },
   "name": "patientor-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "tsc": "tsc",
-    "dev": "ts-node-dev index.ts",
+    "dev": "ts-node-dev src/index.ts",
     "lint": "eslint --ext .ts .",
     "start": "node build/index.js"
   },
