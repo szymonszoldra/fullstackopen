@@ -23,3 +23,7 @@ export const addPatient = (entry: NewPatientEntry): Patient => {
   patients.push(newEntry);
   return newEntry;
 };
+
+export const findPatient = (id: string): Patient | undefined => {
+  return patients.find(p => p.id === id);
+};

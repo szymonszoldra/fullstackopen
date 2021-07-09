@@ -47,6 +47,7 @@ const unparsedPatients = [
 const patients: Array<Patient> = unparsedPatients.map(obj => {
   const object = toNewPatientEntry(obj) as Patient;
   object.id = obj.id;
+  object.entries = [];
   return object;
 });
 
