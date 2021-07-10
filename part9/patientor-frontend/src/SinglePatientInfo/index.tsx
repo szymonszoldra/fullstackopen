@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useStateValue } from '../state';
+import { useStateValue, addPatientInfo } from '../state';
 import { useParams } from 'react-router-dom';
 import { apiBaseUrl } from '../constants';
 import { PatientWithEntries } from "../types";
@@ -20,7 +20,7 @@ const SinglePatientInfo = () => {
     void (async (): Promise<void> => {
       try {
         const { data: patientInfo } = await axios.get<PatientWithEntries>(`${apiBaseUrl}/patients/${id}`);
-        dispatch({ type: 'ADD_PATIENT_INFO', payload: patientInfo });
+        dispatch(addPatientInfo(patientInfo));
       } catch(e) {
         setMessage('No such patient in database');
       }
