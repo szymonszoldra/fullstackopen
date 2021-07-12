@@ -31,19 +31,27 @@ const SinglePatientInfo = () => {
     return <div>{message}</div>;
   }
 
-  const { name, gender, ssn, occupation } = patientsInfo[id];
+  const { name, gender, ssn, occupation, entries } = patientsInfo[id];
   
   const icons = { 
     male: 'mars' as SemanticICONS,
     female: 'venus' as SemanticICONS,
     other: 'transgender' as SemanticICONS
   };
-  
   return ( 
     <div>
       <h3>{name} <Icon name={icons[gender]} /></h3>
       <p>ssn: {ssn}</p>
       <p>occupation: {occupation}</p>
+      <h4>entries</h4>
+      {entries?.map(entry => (
+        <div key={entry.id}>
+          <p>{entry.date} {entry.description}</p>
+          <ul>
+            {entry.diagnosisCodes?.map((code) => <li key={code}>{code}</li>)}
+          </ul>
+        </div>
+      ))}
     </div>
   );
 };
