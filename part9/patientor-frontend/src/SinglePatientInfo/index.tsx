@@ -3,14 +3,19 @@ import axios from 'axios';
 import { useStateValue, addPatientInfo } from '../state';
 import { useParams } from 'react-router-dom';
 import { apiBaseUrl } from '../constants';
-import { PatientWithEntries } from "../types";
+import { PatientWithEntries, Diagnosis } from "../types";
 
 import { Icon, SemanticICONS } from 'semantic-ui-react';
 
 const SinglePatientInfo = () => {
   const [message, setMessage] = useState<string>('loading...');
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[] | null>(null);
   const { id } = useParams<{ id: string }>();
   const [{ patientsInfo }, dispatch] = useStateValue();
+
+  const getDiagnosisDescription = (code: string): string | undefined => {
+    return diagnoses?.find(diagnosis => diagnosis.code === code)?.name;
+  };
 
   useEffect(() => {
     if (id in patientsInfo) {
@@ -21,6 +26,8 @@ const SinglePatientInfo = () => {
       try {
         const { data: patientInfo } = await axios.get<PatientWithEntries>(`${apiBaseUrl}/patients/${id}`);
         dispatch(addPatientInfo(patientInfo));
+        const response = await axios.get<Diagnosis[]>(`${apiBaseUrl}/diagnoses`);
+        setDiagnoses(response.data);
       } catch(e) {
         setMessage('No such patient in database');
       }
@@ -48,7 +55,7 @@ const SinglePatientInfo = () => {
         <div key={entry.id}>
           <p>{entry.date} {entry.description}</p>
           <ul>
-            {entry.diagnosisCodes?.map((code) => <li key={code}>{code}</li>)}
+            {entry.diagnosisCodes?.map((code) => <li key={code}>{code} {getDiagnosisDescription(code)}</li>)}
           </ul>
         </div>
       ))}
