@@ -6,6 +6,7 @@ import { apiBaseUrl } from '../constants';
 import { PatientWithEntries, Diagnosis } from "../types";
 
 import { Icon, SemanticICONS } from 'semantic-ui-react';
+import EntryIcon from '../components/EntryIcon';
 
 const SinglePatientInfo = () => {
   const [message, setMessage] = useState<string>('loading...');
@@ -53,7 +54,7 @@ const SinglePatientInfo = () => {
       <h4>entries</h4>
       {entries?.map(entry => (
         <div key={entry.id}>
-          <p>{entry.date} {entry.description}</p>
+          <h5>{entry.date} {entry.description} <EntryIcon entry={entry} /></h5>
           <ul>
             {entry.diagnosisCodes?.map((code) => <li key={code}>{code} {getDiagnosisDescription(code)}</li>)}
           </ul>
