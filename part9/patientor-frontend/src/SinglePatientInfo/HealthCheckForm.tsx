@@ -1,6 +1,7 @@
 import * as React from 'react';
 import axios from 'axios';
-import { Field, Formik, Form, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { Field, Formik, Form } from 'formik';
 import { Grid, Button } from 'semantic-ui-react';
 import { TextField, SelectField, HealthCheckRatingOption, DiagnosisSelection } from '../AddPatientModal/FormField';
 
@@ -25,12 +26,17 @@ const HealthCheckForm = () => {
   const handleSubmit = async (values: EntryWithoutId): Promise<void> => {
     try {
       const {data: response} = await axios.post<Entry>(`${apiBaseUrl}/patients/${id}/entries`, values);
-      console.log(response);
       dispatch(addDiagnosis(id, response));
     } catch (e) {
       console.error(e);
     }
   };
+
+  const validate = Yup.object({
+    description: Yup.string().required('Description is required'),
+    date: Yup.date().required('Date is required'),
+    specialist: Yup.string().required('Specialist\'s name is required'),
+  });
 
   return ( 
     <Formik
@@ -43,6 +49,7 @@ const HealthCheckForm = () => {
         diagnosisCodes: []
       }}
       onSubmit={handleSubmit}
+      validationSchema={validate}
     >
       {({ isValid, dirty, setFieldValue, setFieldTouched }) => (
         <Form className="form ui">
@@ -74,7 +81,6 @@ const HealthCheckForm = () => {
             setFieldTouched={setFieldTouched}
             diagnoses={diagnoses}
           />
-          <ErrorMessage name="date" />
           <Grid>
               <Grid.Column floated="left" width={5}>
                 <Button type="button" onClick={() => null} color="red">
