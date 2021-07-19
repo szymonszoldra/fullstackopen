@@ -3,23 +3,16 @@ import axios from 'axios';
 import * as Yup from 'yup';
 import { Field, Formik, Form, FormikHelpers } from 'formik';
 import { Grid, Button } from 'semantic-ui-react';
-import { TextField, SelectField, HealthCheckRatingOption, DiagnosisSelection } from '../AddPatientModal/FormField';
+import { TextField, DiagnosisSelection } from '../AddPatientModal/FormField';
 
 import { apiBaseUrl } from '../constants';
-import { EntryWithoutId, HealthCheckRating, Entry } from '../types';
+import { EntryWithoutId, Entry } from '../types';
 
 import { useStateValue } from '../state';
 import { useParams } from 'react-router-dom';
 import { addDiagnosis } from '../state/';
-
-const healthCheckRatingOptions: HealthCheckRatingOption[] = [
-  { value: HealthCheckRating.Healthy, label: 'Healthy'},
-  { value: HealthCheckRating.LowRisk, label: 'Low risk'},
-  { value: HealthCheckRating.HighRisk, label: 'High risk'},
-  { value: HealthCheckRating.CriticalRisk, label: 'Cricital risk'},
-];
-
-const HealthCheckForm = () => {
+ 
+const HospitalEntryForm = () => {
   const [{ diagnoses }, dispatch] = useStateValue();
   const { id } = useParams<{ id: string}>();
 
@@ -37,6 +30,10 @@ const HealthCheckForm = () => {
     description: Yup.string().required('Description is required'),
     date: Yup.date().required('Date is required'),
     specialist: Yup.string().required('Specialist\'s name is required'),
+    discharge: Yup.object({
+      date: Yup.date().required('Discharge date is required'),
+      criteria: Yup.string().required('Discharge criteria is required'),
+    })
   });
 
   return ( 
@@ -45,9 +42,12 @@ const HealthCheckForm = () => {
         description: '',
         date: '',
         specialist: '',
-        type: 'HealthCheck',
-        healthCheckRating: HealthCheckRating.Healthy,
-        diagnosisCodes: []
+        type: 'Hospital',
+        diagnosisCodes: [],
+        discharge: {
+          date: '',
+          criteria: ''
+        }
       }}
       onSubmit={handleSubmit}
       validationSchema={validate}
@@ -72,15 +72,22 @@ const HealthCheckForm = () => {
             name="date"
             component={TextField}
           />
-          <SelectField 
-            label='Rating'
-            name='healthCheckRating'
-            options={healthCheckRatingOptions}
-          />
           <DiagnosisSelection 
             setFieldValue={setFieldValue}
             setFieldTouched={setFieldTouched}
             diagnoses={diagnoses}
+          />
+          <Field 
+            label="Discharge date"
+            placeholder="YYYY-MM-DD"
+            name="discharge.date"
+            component={TextField}
+          />
+          <Field 
+            label="Discharge criteria"
+            placeholder="Criteria"
+            name="discharge.criteria"
+            component={TextField}
           />
           <Grid>
               <Grid.Column floated="left" width={5}>
@@ -105,4 +112,4 @@ const HealthCheckForm = () => {
    );
 };
  
-export default HealthCheckForm;
+export default HospitalEntryForm;
