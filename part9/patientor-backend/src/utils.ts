@@ -101,7 +101,7 @@ const parseDiagnosisCodes = (diagnosisCodes: unknown[]): string[] => {
   }
 
   diagnosisCodes.forEach(code => {
-    if (code.length < 3 || code.length > 5) {
+    if (code.length < 3 || code.length > 6) {
       throw new Error('Incorrect diagnosisCodes!');
     }
   });
@@ -112,7 +112,7 @@ const parseDiagnosisCodes = (diagnosisCodes: unknown[]): string[] => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isHealthCheckRating = (param: any): param is HealthCheckRating => {
-  return Object.values(HealthCheckRating).includes(param);
+  return Object.keys(HealthCheckRating).includes(String(param));
 };
 
 const parseHealthCheckRating = (rating: unknown): HealthCheckRating => {

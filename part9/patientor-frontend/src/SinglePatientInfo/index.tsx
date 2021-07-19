@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useStateValue, addPatientInfo } from '../state';
+import { useStateValue, addPatientInfo, setInitDiagnoses } from '../state';
 import { useParams } from 'react-router-dom';
 import { apiBaseUrl } from '../constants';
 import { PatientWithEntries, Diagnosis } from "../types";
 
 import { Icon, SemanticICONS } from 'semantic-ui-react';
 import EntryIcon from '../components/EntryIcon';
+
+import FormAccordion from './FormAccordion';
 
 const SinglePatientInfo = () => {
   const [message, setMessage] = useState<string>('loading...');
@@ -29,6 +31,7 @@ const SinglePatientInfo = () => {
         dispatch(addPatientInfo(patientInfo));
         const response = await axios.get<Diagnosis[]>(`${apiBaseUrl}/diagnoses`);
         setDiagnoses(response.data);
+        dispatch(setInitDiagnoses(response.data));
       } catch(e) {
         setMessage('No such patient in database');
       }
@@ -60,6 +63,8 @@ const SinglePatientInfo = () => {
           </ul>
         </div>
       ))}
+      <h2>Add entry:</h2>
+      <FormAccordion />
     </div>
   );
 };
