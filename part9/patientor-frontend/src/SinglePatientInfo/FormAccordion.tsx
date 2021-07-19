@@ -1,7 +1,7 @@
 import React, { useState} from 'react';
 import { Accordion, AccordionTitleProps, Icon } from 'semantic-ui-react';
 
-import { HealthCheckForm, HospitalEntryForm } from './EntryForms';
+import { HealthCheckForm, HospitalEntryForm, OccupationalHealthcareForm } from './EntryForms';
 
 const FormAccordion = () => {
   const [activeIndex, setActiveIndex] = useState<number>(-1);
@@ -38,7 +38,7 @@ const FormAccordion = () => {
       <Accordion.Content active={activeIndex === 1}>
         <HospitalEntryForm />
       </Accordion.Content>
-      {/* <Accordion.Title
+      <Accordion.Title
         active={activeIndex === 2}
         index={2}
         onClick={handleClick}
@@ -47,8 +47,8 @@ const FormAccordion = () => {
         Add occupationalhealthcare entry
       </Accordion.Title>
       <Accordion.Content active={activeIndex === 2}>
-      <AddPatientForm onCancel={() => null} onSubmit={() => null}/>
-      </Accordion.Content> */}
+        <OccupationalHealthcareForm />
+      </Accordion.Content>
     </Accordion>
   );
 };
